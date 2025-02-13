@@ -1,0 +1,604 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+
+	<title>Data-driven modeling, optimization, and control in CFD</title>
+
+	<meta name="description" content="ml-cfd-2025">
+	<meta name="author" content="Andre Weiner">
+
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<link rel="stylesheet" href="dist/reset.css">
+	<link rel="stylesheet" href="dist/reveal.css">
+	<link rel="stylesheet" href="dist/theme/black.css" id="theme">
+
+	<!-- Theme used for syntax highlighting of code -->
+	<link rel="stylesheet" href="plugin/highlight/monokai.css">
+
+<body>
+
+	<div class="reveal">
+		<div class="slides">
+			<!-- title slide -->
+			<section>
+				<div style="margin-top: 3em;">
+					<h3 style="color: var(--C3);">Data-driven modeling, optimization, and control in CFD</h3>
+				</div>
+				<p>
+						Andre Weiner,
+						<a href="https://tu-dresden.de/ing/maschinenwesen/ism/psm/die-professur">Chair of Fluid
+							Mechanics</a>
+				</p>
+				<div class="r-hstack">
+					<img src="content/logos/TUD_white.png", style="width: 50%;">
+				</div>
+			</section>
+
+			<!-- outline -->
+			<section>
+				<section>
+					<table style="border-collapse: collapse; border: none;">
+						<tr>
+							<td style="text-align: center; vertical-align: middle; border: none;">
+								<span style="color: var(--C0); font-size: 2em;">01</span>
+							</td>
+							<td style="text-align: left; vertical-align: middle; border: none;">
+								<span>machine learning tasks</span>
+								<span style="font-size: 0.5em; display: block;">
+									regression, classification, clustering, ...
+								</span>
+							</td>
+						</tr>
+						<tr>
+							<td style="text-align: center; vertical-align: middle; border: none;">
+								<span style="color: var(--C0); font-size: 2em;">02</span>
+							</td>
+							<td style="text-align: left; vertical-align: middle; border: none;">
+								<span>optimizing GAMG settings</span>
+								<span style="font-size: 0.5em; display: block;">
+									with Bayesian optimization
+								</span>
+							</td>
+						</tr>
+						<tr>
+							<td style="text-align: center; vertical-align: middle; border: none;">
+								<span style="color: var(--C0); font-size: 2em;">03</span>
+							</td>
+							<td style="text-align: left; vertical-align: middle; border: none;">
+								<span>modeling a turbulent flow</span>
+								<span style="font-size: 0.5em; display: block;">
+									with dynamic mode decomposition
+								</span>
+							</td>
+						</tr>
+						<tr>
+							<td style="text-align: center; vertical-align: middle; border: none;">
+								<span style="color: var(--C0); font-size: 2em;">04</span>
+							</td>
+							<td style="text-align: left; vertical-align: middle; border: none;">
+								<span>closed-loop flow control</span>
+								<span style="font-size: 0.5em; display: block;">
+									with model-based deep reinforcement learning
+								</span>
+							</td>
+						</tr>
+					</table>
+				</section>
+			</section>
+			<section>
+				<section>
+					<h3 style="color: var(--C0);">machine learning tasks</h3>
+					<p>regression, classification, clustering, ...</p>
+				</section>
+				<section>
+					<blockquote>Think in terms of <span style="color: var(--C3);">machine learning tasks</span> (regression, classification, ...) rather than <span style="color: var(--C3);">specific algorithms</span> (neural networks, Gaussian processes, ...).</blockquote>
+				</section>
+				<section>
+					<p><span style="color: var(--C3);">regression:</span> matching inputs and continuous outputs</p>
+					<div class="r-stack">
+						<img class="fragment fade-out" data-fragment-index="0" src="content/general/linear_regression_raw.svg" style="width: 50%;">
+						<img class="fragment" data-fragment-index="0" src="content/general/linear_regression.svg" style="width: 50%;">
+					</div>
+				</section>
+				<section>
+					<p><span style="color: var(--C3);">classification:</span> matching inputs and discrete outputs</p>
+					<div class="r-stack">
+						<img class="fragment fade-out" data-fragment-index="0" src="content/general/linear_classification_raw.svg" style="width: 50%;">
+						<img class="fragment" data-fragment-index="0" src="content/general/linear_classification.svg" style="width: 50%;">
+					</div>
+				</section>
+				<section>
+					<p><span style="color: var(--C3);">dim. reduction:</span> finding low-dim. representations</p>
+					<div class="r-stack">
+						<img class="fragment fade-out" data-fragment-index="0" src="content/general/pca_raw.svg" style="width: 50%;">
+						<img class="fragment" data-fragment-index="0" src="content/general/pca.svg" style="width: 50%;">
+					</div>
+				</section>
+				<section>
+					<p><span style="color: var(--C3);">clustering:</span> grouping similar data points</p>
+					<div class="r-stack">
+						<img class="fragment fade-out" data-fragment-index="0" src="content/general/clustering_raw.svg" style="width: 50%;">
+						<img class="fragment" data-fragment-index="0" src="content/general/clustering.svg" style="width: 50%;">
+					</div>
+				</section>
+				<section>
+					<p><span style="color: var(--C3);">reinforcement learning:</span> sequential decision making (control) under uncertainty</p>
+					<div class="r-stack">
+						<img class="fragment" src="content/general/reinforcement-0.svg" style="width: 100%;">
+						<img class="fragment" src="content/general/reinforcement-1.svg" style="width: 100%;">
+						<img class="fragment" src="content/general/reinforcement-2.svg" style="width: 100%;">
+						<img class="fragment" src="content/general/reinforcement-3.svg" style="width: 100%;">
+						<img class="fragment" src="content/general/reinforcement-4.svg" style="width: 100%;">
+					</div>
+				</section>
+			</section>
+
+			<section>
+				<section>
+					<h3 style="color: var(--C0);">optimizing GAMG settings</h3>
+					<p>with Bayesian optimization (BayesOpt)</p>
+					<small>
+						<p>joint work with:</p>
+					<ul>
+						<li>Janis Geise (TU Dresden)</li>
+						<li>Tomislav Marić (TU Darmstadt)</li>
+						<li>M. Elwardi Fadeli (TU Darmstadt)</li>
+						<li>Alessandro Rigazzi (HPE)</li>
+						<li>Andrew Shao (HPE)</li>
+					</ul>
+					<p>references:</p>
+						<ul>
+							<li><a href="https://github.com/OFDataCommittee/openfoam-smartsim">github.com/OFDataCommittee/openfoam-smartsim</a></li>
+						</ul>
+				</small>
+				</section>
+				<section>
+					<p><span style="color: var(--C0);">GAMG</span> - generalized geometric algebraic multigrid</p>
+					<div class="fragment">
+						<p>excellent introduction by <a href="https://www.youtube.com/@fluidmechanics101">Fluid Mechanics 101</a></p>
+						<ul>
+							<li><a href="https://www.youtube.com/watch?v=4UoJpazu_fU">smoothing, aliasing, correction equation</a></li>
+							<li><a href="https://www.youtube.com/watch?v=P5zKHmj4iHY">restriction and prolongation</a></li>
+						</ul>
+					</div>
+				</section>
+				<section>
+					<p>full GAMG entry in <span style="color: var(--C3);">fvSolution</span></p>
+					<pre class="text">
+						<code data-line-numbers="4|10|13|16|17">p
+{
+	solver                    GAMG;
+	smoother                  DICGaussSeidel;
+	tolerance                 1e-06;
+	relTol                    0.01;
+	cacheAgglomeration        yes;
+	nCellsInCoarsestLevel     10;
+	processorAgglomerator     none;
+	nPreSweeps                0;
+	preSweepsLevelMultiplier  1;
+	maxPreSweeps              10;
+	nPostSweeps               2;
+	postSweepsLevelMultiplier 1;
+	maxPostSweeps             10;
+	nFinestSweeps             2;
+	interpolateCorrection     no;
+	scaleCorrection           yes;
+	directSolveCoarsest       no;
+	coarsestLevelCorr
+	{
+		solver          PCG;
+		preconditioner  DIC;
+		tolerance       1e-06;
+		relTol          0.01;
+	}
+}
+						</code>
+					</pre>
+				</section>
+				<section>
+					<p>optimal settings depend on</p>
+					<div class="r-hstack">
+						<ul class="fragment" style="width: 40%;">
+							<li>coefficient matrix
+								<ul>
+									<li>flow physics</li>
+									<li>discretization</li>
+								</ul>
+							</li>
+						</ul>
+						<ul class="fragment" style="width: 40%;">
+							<li>parallelization</li>
+							<li>hardware</li>
+							<li>...</li>
+						</ul>
+					</div>
+					<p class="fragment" style="color: var(--C3);">$\rightarrow$ high-dim. search space with uncertainty</p>
+				</section>
+				<section>
+					<p><span style="color: var(--C3);">Bayesian optimization</span><br>optimization of black-box objective function guided by probabilistic surrogate model (Gaussian process)</p>
+					<p class="fragment"><span style="color: var(--C0);">idea</span><br> use BayesOpt to find optimal GAMG settings<br> for class of simulations</p>
+				</section>
+				<section>
+					<img src="content/bayes/bayes_opt_1.png" width="90%">
+				</section>
+				<section>
+					<img src="content/bayes/execution_time_dt.svg" width="100%">
+					<p>elapsed time for 50 steps; 2D cylinder flow</p>
+				</section>
+				<section>
+					<p>implementation outline</p>
+					<ul>
+						<li><a href="https://ax.dev/">Ax</a> for BayesOpt</li>
+						<li><a href="https://github.com/CrayLabs/SmartSim">SmartSim</a> for orchestration</li>
+						<li>~100 lines Python script</li>
+					</ul>
+				</section>
+				<section>
+					<p>search space definition in <span style="color: var(--C3);">config.yaml</span></p>
+					<pre class="text">
+						<code data-line-numbers="1-7|8-12">smoother:
+	name: "smoother"
+	type: "choice"
+	value_type: "str"
+	is_ordered: False
+	sort_values: False
+	values: ["FDIC", "DIC", "DICGaussSeidel", "symGaussSeidel", "nonBlockingGaussSeidel", "GaussSeidel"]
+nFinestSweeps:
+	name: "nFinestSweeps"
+	type: "range"
+	value_type: "int"
+	bounds: [1, 10]
+...
+						</code>
+					</pre>
+				</section>
+				<section>
+					<img src="content/bayes/execution_time_dt_opt.svg" width="100%">
+					<p><span style="color: var(--C3);">~15% runtime reduction</span></p>
+				</section>
+				<section>
+					<iframe src="content/bayes/report.html" style="border-radius: 25px; width: 100%; height: 12em;">
+					</iframe>
+				</section>
+			</section>
+
+			<section>
+				<section>
+					<h3 style="color: var(--C0);">modeling a turbulent flow</h3>
+					<p>with dynamic mode decomposition (DMD)</p>
+					<small>
+						<p>joint work with:</p>
+						<ul>
+							<li>Janis Geise (TU Dresden)</li>
+							<li>Richard Semaan (f. TU Braunschweig)</li>
+						</ul>
+						<p>references:</p>
+						<ul>
+							<li><a href="https://arxiv.org/abs/2411.04868">dynamic mode decomposition of noisy flow data</a></li>
+							<li><a href="https://github.com/AndreWeiner/dmd_denoising_stab">github.com/AndreWeiner/dmd_denoising_stab</a></li>
+						</ul>
+					</small>
+				</section>
+				<section>
+					<p>DMD = dimensionality reduction + (linear) regression</p>
+					<div class="r-hstack">
+						<div class="fragment" style="width: 45%; height: 5em; vertical-align: top;">
+							<p style="color: var(--C0);">advantages</p>
+							<ul>
+								<li>efficient</li>
+								<li>interpretable</li>
+								<li>predictive (ROM)</li>
+								<li>many extensions</li>
+							</ul>
+						</div>
+						<div class="fragment" style="width: 45%; height: 5em; vertical-align: top;">
+							<p style="color: var(--C3);">disadvantages</p>
+							<ul>
+								<li>sensitivity
+									<ul>
+										<li>white noise</li>
+										<li>nonlinearity</li>
+									</ul>
+								</li>
+								<li>poor predictions</li>
+							</ul>
+						</div>
+
+					</div>
+				</section>
+				<section>
+					<p>some notation</p>
+					<table style="border-collapse: collapse; border: none;">
+						<tr class="fragment">
+							<td style="border: none;">nr. state variables</td>
+							<td style="border: none;">$M$</td>
+						</tr>
+						<tr class="fragment">
+							<td style="border: none;">state vector</td>
+							<td style="border: none;">$\mathbf{x}_n \in \mathbb{R}^M$</td>
+						</tr>
+						<tr class="fragment">
+							<td style="border: none;">nr. snapshots</td>
+							<td style="border: none;">$N$</td>
+						</tr>
+						<tr class="fragment">
+							<td style="border: none;">data matrix</td>
+							<td style="border: none;">$\mathbf{M} = \left[\mathbf{x}_1, \ldots, \mathbf{x}_N \right]^T$</td>
+						</tr>
+					</table>
+				</section>
+				<section>
+					<p>dimensionality reduction via SVD</p>
+					<p>$$\mathbf{M} \approx \mathbf{U}_r\mathbf{\Sigma}_r\mathbf{V}_r^T$$</p>
+					<div class="r-stack">
+						<img class="fragment fade-out" src="content/dmd/cylinder2D/cylinder_2D_svd.png" width="70%">
+						<div class="fragment">
+							<p>reduced data matrix</p>
+							<p>$$\tilde{\mathbf{M}} = \mathbf{U}_r^T\mathbf{M} = \mathbf{\Sigma}_r\mathbf{V}_r^T,\quad \tilde{\mathbf{M}} \in \mathbb{R}^{r\times N}$$</p>
+							<p>$$N \ll M,\quad r\ll N$$</p>
+						</div>
+					</div>
+				</section>
+				<section>
+					<p>classical DMD</p>
+					<p>$$\tilde{\mathbf{x}}_{n+1} = \tilde{\mathbf{A}} \tilde{\mathbf{x}}_{n}$$</p>
+					<div class="fragment">
+						<p>$$\underset{\tilde{\mathbf{A}}}{\mathrm{argmin}}\left|\left| \tilde{\mathbf{Y}}-\tilde{\mathbf{A}}\tilde{\mathbf{X}} \right|\right|_2
+							=\tilde{\mathbf{Y}}\tilde{\mathbf{X}}^\dagger$$</p>
+						<p>$$\tilde{\mathbf{X}} = \left[\mathbf{x}_1, \ldots, \mathbf{x}_{N-1} \right]^T,\quad  \tilde{\mathbf{Y}} = \left[\mathbf{x}_2, \ldots, \mathbf{x}_{N} \right]^T$$</p>
+					</div>
+				</section>
+				<section>
+					<img src="content/dmd/cylinder2D/noisy_coeffs.svg" width="100%">
+					<p>noise-corrupted reduced state vector</p>
+				</section>
+				<section>
+					<img src="content/dmd/cylinder2D/dmd_pred_cylinder_2D.svg" width="100%">
+					<p>noise leads to decaying dynamics</p>
+				</section>
+				<section>
+					<p>forward-backward-consistent DMD</p>
+					<p>if $\ \tilde{\mathbf{x}}_{n+1} = \tilde{\mathbf{A}} \tilde{\mathbf{x}}_{n}\ $ <span class="fragment">then $\ \tilde{\mathbf{A}}^{-1}\tilde{\mathbf{x}}_{n+1} = \tilde{\mathbf{x}}_{n}$</span> </p>
+					<p class="fragment">$$\underset{\tilde{\mathbf{A}}}{\mathrm{argmin}}\left|\left| \tilde{\mathbf{Y}}-\tilde{\mathbf{A}}\tilde{\mathbf{X}} \right|\right|_F +
+    \left|\left| \tilde{\mathbf{X}}-\tilde{\mathbf{A}}^{-1}\tilde{\mathbf{Y}} \right|\right|_F$$</p>
+					<p class="fragment">reference: <a href="https://doi.org/10.1137/18M123396"> O. Azencot et al. (2019)</a></p>
+				</section>
+				<section>
+					<img src="content/dmd/cylinder2D/cdmd_pred_cylinder_2D.svg" width="100%">
+					<p>improved robustness, small frequency error</p>
+				</section>
+				<section>
+					<p>error propagation - "optimized" DMD</p>
+					<p>$\tilde{\mathbf{x}}_n \approx \tilde{\mathbf{\Phi}}\tilde{\mathbf{\Lambda}}^{n-1}\tilde{\mathbf{b}}$, <span class="fragment">$\ \tilde{\mathbf{A}}=\tilde{\mathbf{\Phi}}\tilde{\mathbf{\Lambda}}\tilde{\mathbf{\Phi}}^{-1}$,</span> <span class="fragment">$\ \tilde{\mathbf{b}} = \tilde{\mathbf{\Phi}}^{-1}\tilde{\mathbf{x}}_1$</span></p>
+					<p class="fragment">$$\underset{\tilde{\mathbf{\lambda}},\tilde{\mathbf{\Phi}}_\mathbf{b}}{\mathrm{argmin}}\left|\left| \tilde{\mathbf{M}}-\tilde{\mathbf{\Phi}}_\mathbf{b}\tilde{\mathbf{V}}_{\mathbf{\lambda}} \right|\right|_F$$</p>
+					<p class="fragment">reference: <a href="https://doi.org/10.1137/M1124176"> T. Askham, J. N. Kutz (2018)</a></p>
+				</section>
+				<section>
+					<img src="content/dmd/cylinder2D/odmd_pred_cylinder_2D.svg" width="100%">
+					<p>improved robustness, optimization challenging</p>
+				</section>
+				<section>
+					<p>multiple constraints and noise identification</p>
+					<p class="fragment">$ \tilde{\mathbf{x}}_n = \hat{\mathbf{x}}_n + \tilde{\mathbf{n}}_n $</p>
+					<p class="fragment">$\hat{\bar{\mathbf{x}}}_{n+h} = \tilde{\mathbf{\Phi}}\tilde{\mathbf{\Lambda}}^{n+h-1}\tilde{\mathbf{\Phi}}^{-1} \hat{\mathbf{x}}_n$</p>
+					<p class="fragment">$L_f = \sum\limits_{n=1}^{N-H}\sum\limits_{h=1}^{H} \left|\tilde{\mathbf{x}}_{n+h} - \hat{\bar{\mathbf{x}}}_{n+h}\right|$</p>
+					<p class="fragment">$L_b = \sum\limits_{n=H+1}^{N}\sum\limits_{h=1}^{H} \left|\tilde{\mathbf{x}}_{n-h} - \hat{\bar{\mathbf{x}}}_{n-h}\right|$</p>
+				</section>
+				<section>
+					<p>final optimization problem</p>
+					<p>$\underset{\tilde{\mathbf{\lambda}},\tilde{\mathbf{\Phi}}, \tilde{\mathbf{N}}}{\mathrm{argmin}} \left(L_f + L_b\right)$</p>
+					<p>optimization via <br><span style="color: var(--C3);">automatic differentiation + gradient descent</span></p>
+				</section>
+				<section>
+					<img src="content/dmd/cylinder3D/train_val_loss.svg" width="100%">
+					<p>early stopping prevents overadjustment to data</p>
+				</section>
+				<section>
+					<img src="content/dmd/cylinder2D/benchmark_models.svg" width="100%">
+					<p>prediction error for increasing noise level</p>
+				</section>
+				<section>
+					<video autoplay controls loop width="100%">
+						<source src="content/dmd/cylinder3D/umag_prime_web.mp4">
+					</video>
+					<p>$|\mathbf{u}^\prime|$ at $Re=dU_\mathrm{in}/\nu=3700$; DNS setup based on<br> <a href="http://dx.doi.org/10.1063/1.4818641">O. Lehmkuhl et al. (2013)</a> </p>
+				</section>
+				<section>
+					<img src="content/dmd/cylinder3D/force_coeffs_welch_4seg.svg", width="100%">
+					<p>PSD of force coefficients (p-Welch, 4 segments)<br> $St=fT_\mathrm{conv}$ and $T_\mathrm{conv}=d/U_\mathrm{in}$</p>
+				</section>
+				<section>
+					<img src="content/dmd/cylinder3D/singular_values.svg" width="100%">
+					<p>relative and cumulative explained variance</p>
+				</section>
+				<section>
+					<video autoplay controls loop width="70%">
+						<source src="content/dmd/cylinder3D/umag_prime_web.mp4">
+					</video>
+					<div class="r-stack">
+						<div class="fragment current-visible">
+							<p>SVD reconstruction with $r=10$</p>
+							<video autoplay controls loop width="70%">
+								<source src="content/dmd/cylinder3D/svd_rec_r10_web.mp4">
+							</video>
+						</div>
+						<div class="fragment fade-in-then-out">
+							<p>SVD reconstruction with $r=30$</p>
+							<video autoplay controls loop width="70%">
+								<source src="content/dmd/cylinder3D/svd_rec_r30_web.mp4">
+							</video>
+						</div>
+						<div class="fragment fade-in-then-out">
+							<p>SVD reconstruction with $r=100$</p>
+							<video autoplay controls loop width="70%">
+								<source src="content/dmd/cylinder3D/svd_rec_r100_web.mp4">
+							</video>
+						</div>
+						<div class="fragment fade-in-then-out">
+							<p>SVD reconstruction with $r=1000$</p>
+							<video autoplay controls loop width="70%">
+								<source src="content/dmd/cylinder3D/svd_rec_r1000_web.mp4">
+							</video>
+						</div>
+					</div>
+				</section>
+				<section>
+					<video autoplay controls loop width="100%">
+						<source src="content/dmd/cylinder3D/ocdmd_pred_r10_web.mp4">
+					</video>
+					<p>$|\mathbf{u}^\prime|$ prediction; $r=10$, $H=5f_\mathrm{vs}$</p>
+				</section>
+				<section>
+					<video autoplay controls loop width="100%">
+						<source src="content/dmd/cylinder3D/ocdmd_mode_1_web.mp4">
+					</video>
+					<p>$|\mathbf{u}^\prime|$ vortex shedding mode</p>
+				</section>
+			</section>
+
+			<section>
+				<section>
+					<h3 style="color: var(--C0);">closed-loop flow control</h3>
+					<p>with model-based deep reinforcement learning</p>
+					<small>
+						<p>joint work with Janis Geise (TU Dresden)</p>
+						<p>references:</p>
+						<ul>
+							<li><a href="https://link.springer.com/article/10.1007/s11012-024-01808-z">model-based DRL for accelerated learning from flow simulations</a></li>
+							<li><a href="https://github.com/JanisGeise/MB_DRL_for_accelerated_learning_from_CFD">github.com/JanisGeise/MB_DRL_for_accelerated_learning_from_CFD</a></li>
+						</ul>
+					</small>
+				</section>
+				<section>
+					<img src="content/drl/cylinder2D/domain_cylinder.svg" width="100%">
+					<p>closed-loop control benchmark, $Re=100$</p>
+				</section>
+				<section>
+					<video controls loop width="100%" style="border-radius: 25px;">
+						<source src="content/drl/cylinder2D/cylinder_MF_20fps_short.mp4">
+					</video>
+					<p>evaluation of optimal policy (control law)</p>
+				</section>
+				<section>
+					<p>separation control, <a href="https://doi.org/10.1038/s41467-025-56408-6">B. Font et al. (2025)</a></p>
+					<ul>
+						<li class="fragment">LES, higher-order spectral elements</li>
+						<li class="fragment">8 simulations in parallel</li>
+						<li class="fragment">96 episodes (iterations)</li>
+						<li class="fragment">6 days turnaround time</li>
+						<li class="fragment">1152 GPUh (A100)</li>
+						<li class="fragment">$4$ EUR/GPUh <span style="color: var(--C3);">$\rightarrow 5$ kEUR</span></li>
+					</ul>
+				</section>
+				<section>
+					<p>Training cost <a href="https://www.cfd-online.com/Wiki/DrivAer_Model">DrivAer model</a></p>
+					<ul>
+						<li class="fragment">$5$ hours/simulation (1000 MPI ranks)</li>
+						<li class="fragment">$10$ parallel simulations</li>
+						<li class="fragment">$100$ iterations <span style="color: var(--C3);">$\rightarrow 20$ days</span> turnaround time</li>
+						<li class="fragment">$20\times 24\times 10\times 1000 \approx 5\times 10^6 $ CPUh</li>
+						<li class="fragment">$0.01-0.05$ EUR/CPUh <span style="color: var(--C3);">$\rightarrow 0.5-2$ mEUR</span></li>
+					</ul>
+					<p class="fragment"><span style="color: var(--C3);">CFD simulations are expensive!</span></p>
+				</section>
+				<section>
+					<p><b style="color: var(--C0);">Idea:</b> replace CFD with model(s) in some episodes</p>
+					<p class="fragment"><b style="color: var(--C3);">Challenge:</b> dealing with surrogate model errors</p>
+					<div class="fragment">
+						<pre class="python"><code>
+for e in episodes:
+	if not models_reliable():
+		sample_trajectories_from_simulation()
+		update_models()
+	else:
+		sample_trajectories_from_models()
+	update_policy()
+						</code></pre>
+						<p>Based on <a href="https://arxiv.org/abs/1802.10592">Model Ensemble TRPO</a>.</p>
+					</div>
+					
+				</section>
+				<section>
+					<p>auto-regressive surrogate models with weights $\theta_m$</p>
+					<p>
+						$$
+						m_{\theta_m} : (\underbrace{S_{n-d}, \ldots, S_{n-1}, S_n}_{\hat{S}_n}, A_n) \rightarrow (S_{n+1}, R_{n+1})
+						$$
+					</p>
+					<div class="fragment">
+						<p>$\mathbf{x}_n = [\hat{S}_n, A_n]$ and $\mathbf{y}_n = [S_{n+1}, R_{n+1}]$</p>
+					<p>
+						$$
+						L_m = \frac{1}{|D|}\sum\limits_{i}^{|D|} (\mathbf{y}_i - m_{\theta_m}(\mathbf{x}_i))^2
+						$$
+					</p>
+				</div>
+				</section>
+				<section>
+					<p>When are the models reliable?</p>
+					<ol>
+						<li class="fragment">evaluate policy for every model</li>
+						<li class="fragment">compare to previous policy loss</li>
+						<li class="fragment">switch if loss did not decrease for<br>at least $N_\mathrm{thr}$ of the models</li>
+					</ol>
+				</section>
+				<section>
+					<img src="content/drl/cylinder2D/execution_times.svg" width="80%">
+					<p>normalized training time for MEPPO variants</p>
+				</section>
+			</section>
+
+			<section>
+				<h3 style="color: var(--C0);">final remarks</h3>
+				<p>data-driven methods in CFD can</p>
+				<ul>
+					<li>reduce development cost</li>
+					<li>improve application design</li>
+				</ul>
+			</section>
+
+			<!-- end -->
+			<section>
+				<h1>THE END</h1>
+				<h3>Thank you for you attention!</h3>
+				<div>
+					<a href="mailto:andre.weiner@tu-dresden.de">andre.weiner@tu-dresden.de</a><br>
+					<a href="https://github.com/AndreWeiner">github.com/AndreWeiner</a>
+				</div>
+			</section>
+		</div>
+	</div>
+
+	<script src="dist/reveal.js"></script>
+	<script src="plugin/zoom/zoom.js"></script>
+	<script src="plugin/notes/notes.js"></script>
+	<script src="plugin/search/search.js"></script>
+	<script src="plugin/markdown/markdown.js"></script>
+	<script src="plugin/highlight/highlight.js"></script>
+	<script src="plugin/math/math.js"></script>
+
+	<script>
+
+		Reveal.initialize({
+			controls: true,
+			progress: true,
+			slideNumber: "c",
+			center: true,
+			hash: true,
+			katex: {
+    			local: 'node_modules/katex',
+  			},
+			plugins: [RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight, RevealMath.KaTeX]
+		});
+
+	</script>
+
+</body>
+
+</html>

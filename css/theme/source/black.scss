@@ -19,6 +19,17 @@
 // Override theme settings (see ../template/settings.scss)
 $backgroundColor: #191919;
 
+// matplotlib standard colors, dark stylesheet
+$C0: #8dd3c7;
+$C1: #feffb3;
+$C2: #bfbbd9;
+$C3: #fa8174;
+$C4: #81b1d2;
+$C5: #fdb462;
+$C6: #b3de69;
+$C7: #bc82bd;
+$C8: #ccebc4;
+
 $mainColor: #fff;
 $headingColor: #fff;
 
@@ -27,9 +38,8 @@ $mainFont: 'Source Sans Pro', Helvetica, sans-serif;
 $headingFont: 'Source Sans Pro', Helvetica, sans-serif;
 $headingTextShadow: none;
 $headingLetterSpacing: normal;
-$headingTextTransform: uppercase;
 $headingFontWeight: 600;
-$linkColor: #42affa;
+$linkColor: $C0;
 $linkColorHover: color.scale( $linkColor, $lightness: 15% );
 $selectionBackgroundColor: rgba( $linkColor, 0.75 );
 
@@ -45,3 +55,33 @@ $heading4Size: 1.0em;
 // Theme template ------------------------------
 @import "../template/theme";
 // ---------------------------------------------
+
+:root {
+	--r-bold-color: #{$C3};
+    --C0: #{$C0};
+    --C1: #{$C1};
+    --C2: #{$C2};
+    --C3: #{$C3};
+    --C4: #{$C4};
+    --C5: #{$C5};
+    --C6: #{$C6};
+    --C7: #{$C7};
+    --C8: #{$C8};
+}
+
+.reveal {
+	strong, b {
+		color: var(--r-bold-color);
+	}
+}
+
+.reveal .slide-number {
+    font-size: 1em;
+	color: var(--C0);
+	right: auto;
+	width: 1.5em;
+	height: 1.5em;
+	background-color: #191919;
+	display: grid !important;
+	place-items: center;
+}
