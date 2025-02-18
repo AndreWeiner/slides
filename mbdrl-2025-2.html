@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+
+	<title>Data-driven modeling, optimization, and control in CFD</title>
+
+	<meta name="description" content="ml-cfd-2025">
+	<meta name="author" content="Andre Weiner">
+
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<link rel="stylesheet" href="dist/reset.css">
+	<link rel="stylesheet" href="dist/reveal.css">
+	<link rel="stylesheet" href="dist/theme/black.css" id="theme">
+
+	<!-- Theme used for syntax highlighting of code -->
+	<link rel="stylesheet" href="plugin/highlight/monokai.css">
+
+<body>
+
+	<div class="reveal">
+		<div class="slides">
+			<!-- title slide -->
+			<section>
+				<div style="margin-top: 3em;">
+					<h3 style="color: var(--C3);">Model-based DRL for accelerated learning from flow simulations</h3>
+				</div>
+				<p>
+						Andre Weiner, Janis Geise, 
+						<a href="https://tu-dresden.de/ing/maschinenwesen/ism/psm/die-professur">Chair of Fluid
+							Mechanics</a>
+				</p>
+				<div class="r-hstack">
+					<img src="content/logos/TUD_white.png", style="width: 50%;">
+				</div>
+			</section>
+
+			<!-- outline -->
+			<section>
+				<section>
+					<table style="border-collapse: collapse; border: none;">
+						<tr>
+							<td style="text-align: center; vertical-align: middle; border: none;">
+								<span style="color: var(--C0); font-size: 2em;">01</span>
+							</td>
+							<td style="text-align: left; vertical-align: middle; border: none;">
+								<span>simulation-based learning</span>
+								<span style="font-size: 0.5em; display: block;">
+									motivation and challenges
+								</span>
+							</td>
+						</tr>
+						<tr>
+							<td style="text-align: center; vertical-align: middle; border: none;">
+								<span style="color: var(--C0); font-size: 2em;">02</span>
+							</td>
+							<td style="text-align: left; vertical-align: middle; border: none;">
+								<span>model-based learning</span>
+								<span style="font-size: 0.5em; display: block;">
+									DRL basics, model-based PPO
+								</span>
+							</td>
+						</tr>
+						<tr>
+							<td style="text-align: center; vertical-align: middle; border: none;">
+								<span style="color: var(--C0); font-size: 2em;">03</span>
+							</td>
+							<td style="text-align: left; vertical-align: middle; border: none;">
+								<span>benchmark results</span>
+								<span style="font-size: 0.5em; display: block;">
+									flow past a cylinder, fluidic pinball
+								</span>
+							</td>
+						</tr>
+					</table>
+				</section>
+			</section>
+			<section>
+				<section>
+					<h3 style="color: var(--C0);">simulation-based learning</h3>
+					<p>motivation and challenges</p>
+				</section>
+				<section>
+					<img src="content/drl/cylinder2D/domain_cylinder.svg" width="100%">
+					<p>closed-loop control benchmark, $Re=100$</p>
+				</section>
+				<section>
+					<video controls loop width="100%" style="border-radius: 25px;">
+						<source src="content/drl/cylinder2D/cylinder_MF_20fps_short.mp4">
+					</video>
+					<p>evaluation of optimal policy (control law)</p>
+				</section>
+				<section>
+					<img src="content/drl/literature/sensor_selection_paris2021.png" width="75%" style="border-radius: 25px;">
+					<p>optimal sensor placement - <a href="https://doi.org/10.1017/jfm.2020.1170">R. Paris et al. (2021)</a></p>
+				</section>
+				<section>
+					<img src="content/drl/literature/actuator_selection_paris2023.png" width="100%" style="border-radius: 25px;">
+					<p>optimal actuator placement - <a href="https://doi.org/10.1017/jfm.2022.1043">R. Paris et al. (2023)</a></p>
+				</section>
+				<section>
+					<p>separation control, <a href="https://doi.org/10.1038/s41467-025-56408-6">B. Font et al. (2025)</a></p>
+					<ul>
+						<li class="fragment">LES, higher-order spectral elements</li>
+						<li class="fragment">8 simulations in parallel</li>
+						<li class="fragment">96 episodes (iterations)</li>
+						<li class="fragment">6 days turnaround time</li>
+						<li class="fragment">1152 GPUh (A100)</li>
+						<li class="fragment">$4$ EUR/GPUh <span style="color: var(--C3);">$\rightarrow 5$ kEUR</span></li>
+					</ul>
+				</section>
+				<section>
+					<p>Training cost <a href="https://www.cfd-online.com/Wiki/DrivAer_Model">DrivAer model</a></p>
+					<ul>
+						<li class="fragment">$5$ hours/simulation (1000 MPI ranks)</li>
+						<li class="fragment">$10$ parallel simulations</li>
+						<li class="fragment">$100$ iterations <span style="color: var(--C3);">$\rightarrow 20$ days</span> turnaround time</li>
+						<li class="fragment">$20\times 24\times 10\times 1000 \approx 5\times 10^6 $ CPUh</li>
+						<li class="fragment">$0.01-0.05$ EUR/CPUh <span style="color: var(--C3);">$\rightarrow 0.5-2$ mEUR</span></li>
+					</ul>
+					<p class="fragment"><span style="color: var(--C3);">CFD simulations are expensive!</span></p>
+				</section>
+
+				
+			</section>
+
+			<section>
+				<section>
+					<h3 style="color: var(--C0);">model-based learning</h3>
+					<p>DRL basics, model-based PPO</p>
+				</section>
+				<section>
+					<p><span style="color: var(--C3);">reinforcement learning:</span> sequential decision making (control) under uncertainty</p>
+					<div class="r-stack">
+						<img class="fragment" src="content/general/reinforcement-0.svg" style="width: 100%;">
+						<img class="fragment" src="content/general/reinforcement-1.svg" style="width: 100%;">
+						<img class="fragment" src="content/general/reinforcement-2.svg" style="width: 100%;">
+						<img class="fragment" src="content/general/reinforcement-3.svg" style="width: 100%;">
+						<img class="fragment" src="content/general/reinforcement-4.svg" style="width: 100%;">
+					</div>
+				</section>
+				<section>
+					<p>experience tuple at step $n$
+						$$ (S_n, A_n, R_{n+1}, S_{n+1}) $$
+					</p>
+					<p class="fragment">trajectory over $N$ steps
+						$$\tau = \left[ (S_0, A_0, R_1, S_1), \ldots ,(S_{N-1}, A_{N-1}, R_N, S_N)\right]$$
+					</p>
+				</section>
+				<section>
+					<p>return - dealing with sequential feedback</p>
+					<p>
+						$$
+						  G_n = R_{n+1} + R_{n+2} + ... + R_N
+						$$
+					</p>
+					<div class="fragment">
+					<p>discounted return
+						$$
+						  G_n = R_{n+1} + \gamma R_{n+2} + \gamma^2 R_{n+3} + ... \gamma^{N-1}R_N
+						$$
+					</p>
+					<p>$\gamma$ - discounting factor, typically $\gamma = 0.99$</p>
+				    </div>
+				</section>
+				<section>
+					<p>learning what to expect in a given state</p>
+					<p>
+						$$
+						  L_V = \frac{1}{N_\tau N} \sum\limits_{\tau = 1}^{N_\tau}\sum\limits_{n = 1}^{N} \left( V_{\theta_v}(S_n^\tau) - G_n^\tau \right)^2
+						$$
+					</p>
+					<ul>
+						<li>$\tau$ - trajectory (single simulation)</li>
+						<li>$S_n$ - state/observation (pressure)</li>
+						<li>$V_{\theta_v}$ - parametrized value function</li>
+						<li>clipping not included</li>
+					</ul>
+				</section>
+				<section>
+					<p>Was the selected action a good one?</p>
+					<p>
+						$$\delta_n = R_n + \gamma V_{\theta_v}(S_{n+1}) - V_{\theta_v}(S_n) $$
+						$$\delta_{n+1} = R_n + \gamma R_{n+1} + \gamma^2 V_{\theta_v}(S_{n+2}) - V_{\theta_v}(S_n) $$
+					</p>
+					<div class="fragment">
+					<p>
+						$$
+						  A_n^{GAE} = \sum\limits_{l=0}^{N-n} (\gamma \lambda)^l \delta_{n+l}
+						$$
+					</p>
+					<ul>
+						<li>$\delta_n$ - one-step advantage estimate</li>
+						<li>$A_n^{GAE}$ - generalized advantage estimate</li>
+					</ul>
+					</div>
+				</section>
+				<section>
+					<p>make good actions more likely</p>
+					<p>
+						$$
+						J_\pi = \frac{1}{N_\tau N} \sum\limits_{\tau = 1}^{N_\tau}\sum\limits_{n = 1}^{N}
+						\frac{\pi_{\theta_\pi}(A_n|S_n)}{\pi_{\theta_\pi}^{old}(A_n|S_n)} A^{GAE,\tau}_n
+						$$
+					</p>
+					<ul>
+						<li>$\pi_{\theta_\pi}$ - current policy</li>
+						<li>$\pi_{\theta_\pi}^{old}$ - old policy (previous episode)</li>
+						<li>simplified (no clipping, entropy)</li>
+						<li>$J_\pi$ is <b>maximized</b></li>
+					</ul>
+				</section>
+				<section>
+					<img src="content/drl/meppo_overview.png" width="80%" style="border-radius: 25px;">
+					<p>model-ensemble PPO (MEPPO) flow chart</p>
+				</section>
+				<section>
+					<p>auto-regressive surrogate models with weights $\theta_m$</p>
+					<p>
+						$$
+						m_{\theta_m} : (\underbrace{S_{n-d}, \ldots, S_{n-1}, S_n}_{\hat{S}_n}, A_n) \rightarrow (S_{n+1}, R_{n+1})
+						$$
+					</p>
+					<div class="fragment">
+						<p>$\mathbf{x}_n = [\hat{S}_n, A_n]$ and $\mathbf{y}_n = [S_{n+1}, R_{n+1}]$</p>
+					<p>
+						$$
+						L_m = \frac{1}{|D|}\sum\limits_{i}^{|D|} (\mathbf{y}_i - m_{\theta_m}(\mathbf{x}_i))^2
+						$$
+					</p>
+				</div>
+				</section>
+				<section>
+					<p>How to sample from the ensemble?</p>
+					<ol>
+						<li class="fragment">pick initial sequence from CFD</li>
+						<li class="fragment">generate model trajectories
+							<ol>
+								<li class="fragment" style="color: var(--C3);">select random model</li>
+								<li class="fragment">sample action</li>
+								<li class="fragment">predict next state</li>
+							</ol>
+						</li>
+						</li>
+					</ol>
+				</section>
+				<section>
+					<p>Are the models still reliable?</p>
+					<ol>
+						<li class="fragment">evaluate policy for every model</li>
+						<li class="fragment">compare to previous policy loss</li>
+						<li class="fragment">switch if loss did not decrease for<br>at least $N_\mathrm{thr}$ of the models</li>
+					</ol>
+				</section>
+			</section>
+
+			<section>
+				<section>
+					<h3 style="color: var(--C0);">benchmark results</h3>
+					<p>flow past a cylinder, fluidic pinball</p>
+					<small>
+						<p>references:</p>
+						<ul>
+							<li><a href="https://link.springer.com/article/10.1007/s11012-024-01808-z">model-based DRL for accelerated learning from flow simulations</a></li>
+							<li><a href="https://github.com/JanisGeise/MB_DRL_for_accelerated_learning_from_CFD">github.com/JanisGeise/MB_DRL_for_accelerated_learning_from_CFD</a></li>
+						</ul>
+					</small>
+				</section>
+				<section>
+					<img src="content/drl/cylinder2D/domain_cylinder.svg" width="100%">
+					<p>cylinder flow setup, $Re=100$</p>
+				</section>
+				<section>
+					<p>force coefficients</p>
+					<p>$$c_x = \frac{2F_x}{U_\mathrm{in}^2 A_\mathrm{ref}}\quad c_y = \frac{2F_y}{U_\mathrm{in}^2 A_\mathrm{ref}}$$</p>
+					<div class="fragment" style="color: var(--C3);">
+						<p>instantaneous reward</p>
+						<p>$$R_n = 3 - \left(c_{x,n} + 0.1|c_{y,n}|\right)$$</p>
+					</div>
+				</section>
+				<section>
+					<img src="content/drl/cylinder2D/execution_times.svg" width="80%">
+					<p>normalized training time (cylinder flow)</p>
+				</section>
+				<section>
+					<img src="content/drl/cylinder2D/rewards_vs_episode.svg" width="100%">
+					<p>cumulative rewards (cylinder flow)</p>
+				</section>
+				<section>
+					<img src="content/drl/pinball/domain_pinball.svg" width="80%">
+					<p>fluidic pinball setup, $Re=100$</p>
+				</section>
+				<section>
+					<p>cumulative force coefficients</p>
+					<p>$$c_x = \sum\limits_{i=1}^3 c_{x,i}\quad c_y = \sum\limits_{i=1}^3 c_{y,i}$$</p>
+					<div class="fragment" style="color: var(--C3);">
+						<p>instantaneous reward</p>
+						<p>$$R_n = 1.5 - (c_{x,n} + 0.5 |c_{y,n}|)$$</p>
+					</div>
+				</section>
+				<section>
+					<img src="content/drl/pinball/execution_times.svg" width="80%">
+					<p>normalized training time (fluidic pinball)</p>
+				</section>
+				<section>
+					<img src="content/drl/pinball/rewards_vs_episode.svg" width="100%">
+					<p>cumulative rewards (fluidic pinball)</p>
+				</section>
+				<section>
+					<video controls loop width="100%" style="border-radius: 25px;">
+						<source src="content/drl/pinball/pinball_MF.mp4">
+					</video>
+					<p>evaluation of optimal policy</p>
+				</section>
+				<section>
+					<img src="content/drl/pinball/omega_best_policy.svg" width="100%">
+					<p>force coefficients and actuation (optimal policy)</p>
+				</section>
+				<section>
+					<img src="content/drl/pinball/flow_comparison.png" width="100%" style="border-radius: 25px;">
+					<p>local velocity field</p>
+				</section>
+			</section>
+
+			<section>
+				<h3 style="color: var(--C0);">final remarks</h3>
+				<p>future work will focus on</p>
+				<ul>
+					<li>end-to-end control design</li>
+					<li>surrogate model improvement</li>
+					<li>application to turbulent flows</li>
+				</ul>
+			</section>
+
+			<!-- end -->
+			<section>
+				<h1>THE END</h1>
+				<h3>Thank you for you attention!</h3>
+				<div>
+					<a href="mailto:andre.weiner@tu-dresden.de">andre.weiner@tu-dresden.de</a><br>
+					<a href="https://github.com/AndreWeiner">github.com/AndreWeiner</a>
+				</div>
+			</section>
+		</div>
+	</div>
+
+	<script src="dist/reveal.js"></script>
+	<script src="plugin/zoom/zoom.js"></script>
+	<script src="plugin/notes/notes.js"></script>
+	<script src="plugin/search/search.js"></script>
+	<script src="plugin/markdown/markdown.js"></script>
+	<script src="plugin/highlight/highlight.js"></script>
+	<script src="plugin/math/math.js"></script>
+
+	<script>
+
+		Reveal.initialize({
+			controls: true,
+			progress: true,
+			slideNumber: "c",
+			center: true,
+			hash: true,
+			katex: {
+    			local: 'libs/katex',
+  			},
+			plugins: [RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight, RevealMath.KaTeX]
+		});
+
+	</script>
+
+</body>
+
+</html>
