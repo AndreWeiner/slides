@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+
+	<title>Lange Nacht der Wissenschaften</title>
+
+	<meta name="description" content="lndw-2025">
+	<meta name="author" content="Andre Weiner">
+
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<link rel="stylesheet" href="dist/reset.css">
+	<link rel="stylesheet" href="dist/reveal.css">
+	<link rel="stylesheet" href="dist/theme/black.css" id="theme">
+
+	<!-- Theme used for syntax highlighting of code -->
+	<link rel="stylesheet" href="plugin/highlight/monokai.css">
+
+<body>
+
+	<div class="reveal">
+		<div class="slides">
+			<!-- title slide -->
+			<section>
+				<div style="margin-top: 3em;">
+					<h3>Analyse turbulenter Strömungen</h3>
+					<h3 style="color: var(--C3);">Wie man Ordnung im Chaos findet</h3>
+				</div>
+				<p>
+						Andre Weiner,
+						<a href="https://tu-dresden.de/ing/maschinenwesen/ism/psm/die-professur">Professur für Strömungsmechanik</a>
+				</p>
+				<div class="r-hstack">
+					<img src="content/logos/TUD_white.png", style="width: 50%;">
+				</div>
+			</section>
+
+			<!-- outline -->
+			<section>
+				<section>
+					<table style="border-collapse: collapse; border: none;">
+						<tr>
+							<td style="text-align: center; vertical-align: middle; border: none;">
+								<span style="color: var(--C0); font-size: 2em;">01</span>
+							</td>
+							<td style="text-align: left; vertical-align: middle; border: none;">
+								<span>Turbulente Strömungen</span>
+								<span style="font-size: 0.5em; display: block;">
+									Was ist eigentlich Turbulenz?
+								</span>
+							</td>
+						</tr>
+						<tr>
+							<td style="text-align: center; vertical-align: middle; border: none;">
+								<span style="color: var(--C0); font-size: 2em;">02</span>
+							</td>
+							<td style="text-align: left; vertical-align: middle; border: none;">
+								<span>Regelmäßigkeit</span>
+								<span style="font-size: 0.5em; display: block;">
+									Warum interessiert uns Regelmäßigkeit?
+								</span>
+							</td>
+						</tr>
+						<tr>
+							<td style="text-align: center; vertical-align: middle; border: none;">
+								<span style="color: var(--C0); font-size: 2em;">03</span>
+							</td>
+							<td style="text-align: left; vertical-align: middle; border: none;">
+								<span>Ordnung im Chaos</span>
+								<span style="font-size: 0.5em; display: block;">
+									Wie findet man Regelmäßigkeit?
+								</span>
+							</td>
+						</tr>
+					</table>
+				</section>
+			</section>
+
+			<section>
+				<section>
+					<h3>Was ist eigentlich <span style="color: var(--C0);">Turbulenz</span>?</h3>
+				</section>
+				<section>
+					<video autoplay controls loop width="100%">
+						<source src="content/dmd/cylinder2D/umag_web.mp4">
+					</video>
+					<p>Keine trubulente (laminare) Zylinderumströmung.</p>
+				</section>
+				<section>
+					<img src="content/dmd/cylinder2D/U_mean_lic.png", width="100%">
+					<p>Zeitlich gemittelte laminare Zylinderumströmung.</p>
+				</section>
+				<section>
+					<video autoplay controls loop width="100%">
+						<source src="content/dmd/cylinder3D/umag_web.mp4">
+					</video>
+					<p>Turbulente Zylinderumströmung.</p>
+				</section>
+				<section>
+					<img src="content/dmd/cylinder3D/U_mean_lic.png", width="100%">
+					<p>Zeitlich gemittelte turbulente Zylinderumströmung.</p>
+				</section>
+			</section>
+
+			<section>
+				<section>
+					<h3>Warum interessiert uns <span style="color: var(--C0);">Regelmäßigkeit</span>?</h3>
+				</section>
+				<section>
+					<iframe width="560" height="315" data-src="https://www.youtube.com/embed/3mclp9QmCGs?si=VT9h-v8oTMEkFl1g&amp;start=58" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+					<p>Tacoma Brücke (1940) - <a href="https://www.youtube.com/watch?v=3mclp9QmCGs">Quelle.</a></p>
+				</section>
+				<section>
+					<iframe width="560" height="315" src="https://www.youtube.com/embed/Bh2GfjqzANc?si=xzbKSSRAdMK6C-Ky" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+					<p>Aeroelastisches Flattern - <a href="https://www.youtube.com/watch?v=Bh2GfjqzANc">Quelle.</a></p>
+				</section>
+				<section>
+					<iframe width="560" height="315" src="https://www.youtube.com/embed/OBbjAVqXu_M?si=Xy8VBvdzn6-hEqYv" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+					<p>Experiment im Windkanal - <a href="https://www.youtube.com/watch?v=OBbjAVqXu_M">Quelle.</a></p>
+				</section>
+				<section data-background-color="#ffffff">
+					<video autoplay controls loop width="100%">
+						<source src="content/dmd/oat15a/ddes_oat15_ma.mp4">
+					</video>
+					<p>Transonische Stoß-Grenzschicht-Interaktion.</p>
+				</section>
+			</section>
+
+			<section>
+				<section>
+					<h3>Wie findet man <span style="color: var(--C0);">Regelmäßigkeit</span>?</h3>
+				</section>
+				<section>
+					<img src="content/general/vector_dot_product.svg", width="75%">
+				</section>
+				<section>
+					<p>Wie ähnlich sind die Pfeile?</p>
+					<ol>
+						<li>multipliziere die Komponenten</li>
+						<li>summiere die Ergebnisse</li>
+					</ol>
+					<p class="fragment">
+						<span style="color: var(--C0);">$(1, 1)$</span> $\cdot$ <span style="color: var(--C0);">$(1, 1)$</span> $=1\cdot 1 + 1\cdot 1 = 2$
+					</p>
+					<p class="fragment">
+						<span style="color: var(--C0);">$(1, 1)$</span> $\cdot$ <span style="color: var(--C3);">$(0.5, 1.1)$</span> $=1\cdot 0.5 + 1\cdot 1.3 = 1.8$
+					</p>
+					<p class="fragment">
+						<span style="color: var(--C0);">$(1, 1)$</span> $\cdot$ <span style="color: var(--C2);">$(1, -1)$</span> $=1\cdot 1 + 1\cdot (-1) = 0$
+					</p>
+					<p class="fragment">
+						<span style="color: var(--C0);">$(1, 1)$</span> $\cdot$ <span style="color: var(--C1);">$(-1, -1)$</span> $=1\cdot (-1) + 1\cdot (-1) = -2$
+					</p>
+				</section>
+				<section>
+					<small>
+					<table>
+					  <thead>
+					    <tr>
+					      <th>Zutat</th>
+					      <th>Pfannkuchen A</th>
+					      <th>Pfannkuchen B</th>
+					      <th>Obstsalat</th>
+					    </tr>
+					  </thead>
+					  <tbody>
+					    <tr>
+					      <td>Mehl (EL)</td>
+					      <td>4</td>
+					      <td>3</td>
+					      <td>0</td>
+					    </tr>
+					    <tr>
+					      <td>Milch (EL)</td>
+					      <td>6</td>
+					      <td>5</td>
+					      <td>0</td>
+					    </tr>
+					    <tr>
+					      <td>Eier (Stück)</td>
+					      <td>2</td>
+					      <td>2</td>
+					      <td>0</td>
+					    </tr>
+					    <tr>
+					      <td>Zucker (EL)</td>
+					      <td>1</td>
+					      <td>0.2</td>
+					      <td>1</td>
+					    </tr>
+					    <tr>
+					      <td>Salz (TL)</td>
+					      <td>0.2</td>
+					      <td>1</td>
+					      <td>0.1</td>
+					    </tr>
+						<tr>
+					      <td>...</td>
+					      <td>...</td>
+					      <td>...</td>
+					      <td>...</td>
+					    </tr>
+					  </tbody>
+					</table>
+					<br>
+					<table class="fragment">
+					  <thead>
+					    <tr>
+					      <th>Rezept</th>
+					      <th>Vektorform</th>
+					    </tr>
+					  </thead>
+					  <tbody>
+					    <tr>
+					      <td>Pfannkuchen A</td>
+					      <td>$(4, 6, 2, 1, 0.2)$</td>
+					    </tr>
+					    <tr>
+					      <td>Pfannkuchen A</td>
+					      <td>$(3, 5, 2, 0.2, 1)$</td>
+					    </tr>
+					    <tr>
+					      <td>Obstsalat</td>
+					      <td>$(0, 0, 0, 1, 0.1)$</td>
+					    </tr>
+					  </tbody>
+					</table>
+					</small>
+				</section>
+				<section>
+					<p>Wie ähnlich sind die Rezepte?</p>
+					<small>
+					<p class="fragment">
+						Pfannkuchen A und Pfannkuchen B <br>
+						$4\cdot 3 + 6\cdot 5 + 2\cdot 2 + 1\cdot 0.2 + 0.2\cdot 1$ <br>
+						<span style="color: var(--C3);">$= 46.4$</span>
+					</p>
+					<p class="fragment">
+						Pfannkuchen A und Obstsalat <br>
+						$0 + 0 + 0 + 1 + 0.02$ <br>
+						<span style="color: var(--C3);">$= 1.02$</span>
+					</p>
+					<p class="fragment">
+						Pfannkuchen B und Obstsalat <br>
+						$0 + 0 + 0 + 0.2 + 0.1$ <br>
+						<span style="color: var(--C3);">$= 0.3$</span>
+					</p>
+					</small>
+				</section>
+				<section>
+					<video autoplay controls loop width="100%">
+						<source src="content/dmd/cylinder3D/umag_web.mp4">
+					</video>
+					<p>Turbulente Zylinderumströmung.</p>
+				</section>
+				<section>
+					<img src="content/dmd/cylinder3D/force_fft_f01.png", width="100%">
+				</section>
+				<section>
+					<img src="content/dmd/cylinder3D/force_fft_f02.png", width="100%">
+				</section>
+				<section>
+					<img src="content/dmd/cylinder3D/force_fft_f04.png", width="100%">
+				</section>
+				<section>
+					<img src="content/dmd/cylinder3D/force_fft_fopt.png", width="100%">
+				</section>
+				<section>
+					<img src="content/dmd/cylinder3D/force_fft_full_spectrum.png", width="100%">
+				</section>
+				<section>
+					<video autoplay controls loop width="100%">
+						<source src="content/dmd/cylinder3D/umag_prime_web.mp4">
+					</video>
+					<p>Schwankungen der Geschwindigkeit (Betrag).</p>
+				</section>
+				<section>
+					<video autoplay controls loop width="100%">
+						<source src="content/dmd/cylinder3D/ocdmd_mode_1_web.mp4">
+					</video>
+					<p>Dominante Struktur: periodische Wirbelablösung.</p>
+				</section>
+			</section>
+
+			<!-- end -->
+			<section>
+				<h1>THE END</h1>
+				<p>Vielen Dank für Ihre Aufmerksamkeit!</p>
+				<div>
+					<a href="mailto:andre.weiner@tu-dresden.de">andre.weiner@tu-dresden.de</a>
+				</div>
+			</section>
+		</div>
+	</div>
+
+	<script src="dist/reveal.js"></script>
+	<script src="plugin/zoom/zoom.js"></script>
+	<script src="plugin/notes/notes.js"></script>
+	<script src="plugin/search/search.js"></script>
+	<script src="plugin/markdown/markdown.js"></script>
+	<script src="plugin/highlight/highlight.js"></script>
+	<script src="plugin/math/math.js"></script>
+
+	<script>
+
+		Reveal.initialize({
+			controls: true,
+			progress: true,
+			slideNumber: "c",
+			center: true,
+			hash: true,
+			katex: {
+    			local: 'libs/katex',
+  			},
+			plugins: [RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight, RevealMath.KaTeX]
+		});
+
+	</script>
+
+</body>
+
+</html>
