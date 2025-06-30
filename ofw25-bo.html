@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+
+	<title>Bayesian optimization for parameter tuning and design optimization</title>
+
+	<meta name="description" content="ofw25-bo">
+	<meta name="author" content="Andre Weiner, Tomislav Maric">
+
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<link rel="stylesheet" href="dist/reset.css">
+	<link rel="stylesheet" href="dist/reveal.css">
+	<link rel="stylesheet" href="dist/theme/black.css" id="theme">
+
+	<!-- Theme used for syntax highlighting of code -->
+	<link rel="stylesheet" href="plugin/highlight/monokai.css">
+
+<body>
+
+	<div class="reveal">
+		<div class="slides">
+			<!-- title slide -->
+			<section>
+				<div style="margin-top: 1em;">
+					<h3><span style="color: var(--C3);">Bayesian</span><br>parameter & design<br> <span style="color: var(--C3);">optimization</span></h3>
+				</div>
+					<p>
+							<a href="https://tu-dresden.de/ing/maschinenwesen/ism/psm/die-professur/beschaeftigte/weiner-andre">Andre Weiner</a>,
+							<a href="https://www.mma.tu-darmstadt.de/mma_institute/mma_team/maric_tomislav.en.jsp">Tomislav Marić</a>
+					</p>
+				<div class="r-hstack" style="gap: 2em;">
+					<img src="content/logos/TUD_white.png", style="width: 40%;">
+					<img src="content/logos/TUD_white.png", style="width: 40%;">
+				</div>
+			</section>
+				
+			<section>
+				<section>
+					<img src="content/bayes/naca_cl_cd_alpha.svg", style="width: 100%;">
+				</section>
+				<section>
+					<div class="r-hstack" style="gap: 1em;">
+						<img src="content/bayes/bo_step_1.svg", style="width: 25%;">
+						<img src="content/bayes/bo_step_2.svg", style="width: 25%;", class="fragment">
+						<img src="content/bayes/bo_step_3.svg", style="width: 25%;", class="fragment">
+					</div>
+					<div class="r-hstack" style="gap: 1em;">
+						<img src="content/bayes/bo_step_4.svg", style="width: 25%;", class="fragment">
+						<img src="content/bayes/bo_step_5.svg", style="width: 25%;", class="fragment">
+						<img src="content/bayes/bo_step_6.svg", style="width: 25%;", class="fragment">
+					</div>
+				</section>
+				
+			</section>
+
+			<!-- outline -->
+			<section>
+				<section>
+					<table style="border-collapse: collapse; border: none;">
+						<tr>
+							<td style="text-align: center; vertical-align: middle; border: none;">
+								<span style="color: var(--C0); font-size: 2em;">01</span>
+							</td>
+							<td style="text-align: left; vertical-align: middle; border: none;">
+								<span>Gaussian processes (GP)</span>
+								<span style="font-size: 0.5em; display: block;">
+									from Gaussians distributions to GPs
+								</span>
+							</td>
+						</tr>
+						<tr>
+							<td style="text-align: center; vertical-align: middle; border: none;">
+								<span style="color: var(--C0); font-size: 2em;">03</span>
+							</td>
+							<td style="text-align: left; vertical-align: middle; border: none;">
+								<span>example 1: GAMG settings</span>
+								<span style="font-size: 0.5em; display: block;">
+									optimal solver settings for fast simulations
+								</span>
+							</td>
+						</tr>
+						<tr>
+							<td style="text-align: center; vertical-align: middle; border: none;">
+								<span style="color: var(--C0); font-size: 2em;">04</span>
+							</td>
+							<td style="text-align: left; vertical-align: middle; border: none;">
+								<span>example 2: heat exchanger</span>
+								<span style="font-size: 0.5em; display: block;">
+									balancing pressure loss and heat transfer
+								</span>
+							</td>
+						</tr>
+					</table>
+				</section>
+			</section>
+
+			<!-- Gaussian processes -->
+			<section>
+				<section>
+					<h2>Gaussian process regression</h2>
+				</section>
+				<section>
+					<img src="content/bayes/uvp_gaussian.svg" alt="uvg"
+						style="background:none; border:none; box-shadow:none; width: 100%">
+				</section>
+				<section>
+					<div>
+						<p>process with $d$ random variables</p>
+						<p>$\boldsymbol{X} = \left[X_1, X_2, \ldots, X_d \right]^T$, $\boldsymbol{X} \in \mathbb{R}^{d\times 1}$</p>
+					</div>
+					<div class="fragment">
+						<p>expectation (mean value)</p>
+						<p>$\mu_i = \mathbb{E}\left[X_i\right]$, $\boldsymbol{\mu} = \left[\mu_1, \mu_2, \ldots, \mu_d\right]^T$, $\boldsymbol{\mu} \in \mathbb{R}^{d\times 1}$</p>
+					</div>
+					<div class="fragment">
+						<p>covariance</p>
+						<p>$\sigma_{ij} = \mathbb{E}\left[(X_i-\mu_i)(X_j-\mu_j)\right]$, $\mathbf{\Sigma} \in \mathbb{R}^{d\times d}$</p>
+					</div>
+				</section>
+				<section>
+					<img src="content/bayes/euclidian_distance_dist.svg" alt="uvg"
+						style="background:none; border:none; box-shadow:none; width: 100%">
+				</section>
+				<section>
+					<img src="content/bayes/mahalanobis_distance_dist.svg" alt="uvg"
+						style="background:none; border:none; box-shadow:none; width: 100%">
+				</section>
+				<section>
+					<p>multivariate Gaussian distribution</p>
+					<p style="font-size: 0.5em;">
+						$$
+  						p(\mathbf{x}) = \frac{1}{\sqrt{(2\pi)^d \mathrm{det}(\mathbf{\Sigma})}}\mathrm{exp}\left( -\frac{1}{2}(\mathbf{x}-\boldsymbol{\mu})^T\mathbf{\Sigma}^{-1}(\mathbf{x}-\boldsymbol{\mu}) \right)
+						$$
+					</p>
+					<img src="content/bayes/mvp_mean_cov.png" alt="uvg" class="fragment"
+						style="background:none; border:none; box-shadow:none; width: 100%">
+				</section>
+				<section>
+					<img src="content/bayes/bivariate_gaussian.png" alt="uvg"
+						style="background:none; border:none; box-shadow:none; width: 100%">
+				</section>
+				<section>
+					<img src="content/bayes/bivariate_gaussian_parallel_coord.png" alt="uvg"
+						style="background:none; border:none; box-shadow:none; width: 100%">
+				</section>
+				<section>
+					<p>Gaussians are closed under conditioning</p>
+					<p>
+						$$
+  \boldsymbol{\mu}=\begin{bmatrix} \boldsymbol{\mu}_A \\ \boldsymbol{\mu}_B  \end{bmatrix}, \quad
+  \mathbf{\Sigma} = \begin{bmatrix} \mathbf{\Sigma}_{AA} & \mathbf{\Sigma}_{AB}\\ \mathbf{\Sigma}_{BA} & \mathbf{\Sigma}_{BB}  \end{bmatrix}
+						$$
+					</p>
+					<p class="fragment">
+						$$
+  \boldsymbol{\mu}_{A|B}= \boldsymbol{\mu}_A + \mathbf{\Sigma}_{AB}\mathbf{\Sigma}^{-1}_{BB}\left(\mathbf{x}_B-\mathbf{\mu}_B\right)
+						$$
+						$$
+  \mathbf{\Sigma}_{A|B} = \mathbf{\Sigma}_{AA} - \mathbf{\Sigma}_{AB} \mathbf{\Sigma}^{-1}_{BB} \mathbf{\Sigma}_{BA}
+						$$
+						<span style="color: #fa8174;">posterior $\quad\mathbf{X}_{A|B} \sim \mathcal{N}(\boldsymbol{\mu}_{A|B}, \mathbf{\Sigma}_{A|B})$</span>
+					</p>
+				</section>
+				<section>
+					<img src="content/bayes/10d_gaussian_parallel_coord_naca.png" alt="uvg"
+						style="background:none; border:none; box-shadow:none; width: 100%">
+				</section>
+				<section>
+					<p>from multivariate Gaussians
+						$$
+						\boldsymbol{X} \sim \mathcal{N}(\boldsymbol{\mu}, \mathbf{\Sigma})
+						$$
+					</p>
+					<p class="fragment">... to Gaussian processes
+						$$
+						    f(\boldsymbol{x}) \sim \mathcal{GP}(m(\boldsymbol{x}), k(\boldsymbol{x}, \boldsymbol{x}^\prime))
+						$$
+					</p>
+				</section>
+				<section>
+					<p>RBF kernel:
+						$
+  \quad k(x, x^\prime) = \sigma^2 \mathrm{exp}\left(-\frac{|x - x^\prime|^2}{2l^2}\right)
+						$
+					</p>
+					<img src="content/bayes/rbf_kernel.png" alt="uvg"
+						style="background:none; border:none; box-shadow:none; width: 100%">
+				</section>
+				<section>
+					<img src="content/bayes/10d_mvg_to_gp_naca.png" alt="uvg"
+						style="background:none; border:none; box-shadow:none; width: 100%">
+				</section>
+			</section>
+
+			<section>
+				<section>
+					<h3>example 1:</h3>
+					<h3 style="color: var(--C0);">optimizing GAMG settings</h3>
+					<small>
+						<p>joint work with:</p>
+					<ul>
+						<li>Janis Geise (TU Dresden)</li>
+						<li>Tanuj Ravi (TU Dresden)</li>
+						<li>Tomislav Marić (TU Darmstadt)</li>
+						<li>M. Elwardi Fadeli (TU Darmstadt)</li>
+						<li>Alessandro Rigazzi (HPE)</li>
+						<li>Andrew Shao (HPE)</li>
+					</ul>
+					<p>code: <a href="https://github.com/JanisGeise/BayesOpt_solverSettings">github.com/JanisGeise/BayesOpt_solverSettings</a></p>
+				</small>
+				</section>
+				<section>
+					<p><span style="color: var(--C0);">GAMG</span> - generalized geometric algebraic multigrid</p>
+					<div class="fragment">
+						<p>excellent introduction by <a href="https://www.youtube.com/@fluidmechanics101">Fluid Mechanics 101</a></p>
+						<ul>
+							<li><a href="https://www.youtube.com/watch?v=4UoJpazu_fU">smoothing, aliasing, correction equation</a></li>
+							<li><a href="https://www.youtube.com/watch?v=P5zKHmj4iHY">restriction and prolongation</a></li>
+						</ul>
+					</div>
+				</section>
+				<section>
+					<p>full GAMG entry in <span style="color: var(--C3);">fvSolution</span></p>
+					<pre class="text">
+						<code data-line-numbers="4|13|16">p
+{
+	solver                    GAMG;
+	smoother                  DICGaussSeidel;
+	tolerance                 1e-06;
+	relTol                    0.01;
+	cacheAgglomeration        yes;
+	nCellsInCoarsestLevel     10;
+	processorAgglomerator     none;
+	nPreSweeps                0;
+	preSweepsLevelMultiplier  1;
+	maxPreSweeps              10;
+	nPostSweeps               2;
+	postSweepsLevelMultiplier 1;
+	maxPostSweeps             10;
+	nFinestSweeps             2;
+	interpolateCorrection     no;
+	scaleCorrection           yes;
+	directSolveCoarsest       no;
+	coarsestLevelCorr
+	{
+		solver          PCG;
+		preconditioner  DIC;
+		tolerance       1e-06;
+		relTol          0.01;
+	}
+}
+						</code>
+					</pre>
+				</section>
+				<section>
+					<p>optimal settings depend on</p>
+					<div class="r-hstack">
+						<ul class="fragment" style="width: 40%;">
+							<li>coefficient matrix
+								<ul>
+									<li>flow physics</li>
+									<li>discretization</li>
+								</ul>
+							</li>
+						</ul>
+						<ul class="fragment" style="width: 40%;">
+							<li>parallelization</li>
+							<li>hardware</li>
+							<li>...</li>
+						</ul>
+					</div>
+					<p class="fragment" style="color: var(--C3);">$\rightarrow$ high-dim. search space with uncertainty</p>
+				</section>
+				<section>
+					<p>reduce runtime <span style="color: var(--C3);">without sacrificing accuracy</span></p>
+					<pre class="text">
+						<code data-line-numbers="10">PIMPLE
+{
+    ...
+
+    residualControl
+    {
+        "(U|p)"
+        {
+            relTol          0;
+            tolerance       1e-05;
+        }
+    }
+}
+						</code>
+					</pre>
+				</section>
+				<section>
+					<img src="content/bayes/execution_time_dt.svg" width="100%">
+					<p>elapsed time for 50 steps; 2D cylinder flow</p>
+				</section>
+				<section>
+					<p>implementation outline</p>
+					<ul>
+						<li><a href="https://ax.dev/">Ax</a> for BayesOpt</li>
+						<li><a href="https://github.com/CrayLabs/SmartSim">SmartSim</a> for orchestration</li>
+						<li>~100 lines Python script</li>
+					</ul>
+				</section>
+				<section>
+					<p>search space definition in <span style="color: var(--C3);">config.yaml</span></p>
+					<pre class="text">
+						<code data-line-numbers="1-7|8-12">smoother:
+	name: "smoother"
+	type: "choice"
+	value_type: "str"
+	is_ordered: False
+	sort_values: False
+	values: ["FDIC", "DIC", "DICGaussSeidel", "symGaussSeidel", "nonBlockingGaussSeidel", "GaussSeidel"]
+nFinestSweeps:
+	name: "nFinestSweeps"
+	type: "range"
+	value_type: "int"
+	bounds: [1, 10]
+...
+						</code>
+					</pre>
+				</section>
+				<section>
+					<img src="content/bayes/execution_time_dt_opt.svg" width="100%">
+					<p><span style="color: var(--C3);">~10-15% runtime reduction</span></p>
+				</section>
+				<section data-background-color="#ffffff">
+					<iframe src="content/bayes/report.html" style="border-radius: 0px; width: 100%; height: 12em;">
+					</iframe>
+				</section>
+			</section>
+
+			<section>
+				<section>
+					<h3>example 2:</h3>
+					<h3 style="color: var(--C0);">optimal heat exchanger design</h3>
+					<small>
+						<p>joint work with:</p>
+					<ul>
+						<li>...</li>
+						<li>Andre Weiner (TU Dresden)</li>
+						<li>M. Elwardi Fadeli (TU Darmstadt)</li>
+						<li>Alessandro Rigazzi (HPE)</li>
+						<li>Andrew Shao (HPE)</li>
+					</ul>
+					<p>code: <a href="https://github.com/OFDataCommittee/openfoam-smartsim">github.com/OFDataCommittee/openfoam-smartsim</a></p>
+				</small>
+				</section>
+			</section>
+
+
+			<!-- end -->
+			<section>
+				<h1>THE END</h1>
+				<h3>Thank you for you attention!</h3>
+				<div>
+					<p>data-driven modeling SIG</p>
+					<a href="https://github.com/OFDataCommittee/openfoam-smartsim">github.com/OFDataCommittee/openfoam-smartsim</a>
+				</div>
+			</section>
+		</div>
+	</div>
+
+	<script src="dist/reveal.js"></script>
+	<script src="plugin/zoom/zoom.js"></script>
+	<script src="plugin/notes/notes.js"></script>
+	<script src="plugin/search/search.js"></script>
+	<script src="plugin/markdown/markdown.js"></script>
+	<script src="plugin/highlight/highlight.js"></script>
+	<script src="plugin/math/math.js"></script>
+
+	<script>
+
+		Reveal.initialize({
+			controls: true,
+			progress: true,
+			slideNumber: "c",
+			center: true,
+			hash: true,
+			katex: {
+    			local: 'libs/katex',
+  			},
+			plugins: [RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight, RevealMath.KaTeX]
+		});
+
+	</script>
+
+</body>
+
+</html>
