@@ -36,7 +36,7 @@
 					</p>
 				<div class="r-hstack" style="gap: 2em;">
 					<img src="content/logos/TUD_white.png", style="width: 40%;">
-					<img src="content/logos/TUD_white.png", style="width: 40%;">
+					<img src="content/logos/TUDa_white.png", style="width: 40%;">
 				</div>
 			</section>
 				
@@ -126,6 +126,22 @@
 				<section>
 					<img src="content/bayes/euclidian_distance_dist.svg" alt="uvg"
 						style="background:none; border:none; box-shadow:none; width: 100%">
+				</section>
+				<section>
+					<p>motivation</p>
+					<p>$\mathbf{y} = \mathbf{x} - \boldsymbol{\mu}$, $\Sigma = \mathbf{Q \Lambda Q}^T$, $\tilde{\mathbf{y}} = \mathbf{Q}^T \mathbf{y}$</p>
+					<div class="fragment">
+						<p>normalization in principal coordinates</p>
+						<p>$\tilde{\mathbf{z}}^T = \tilde{\mathbf{y}}^T \mathbf{\Lambda}^{-1/2}$</p>
+					</div>
+					<div class="fragment">
+						<p>back transformation and substitution</p>
+						<p>$\mathbf{z} = \mathbf{Q}\tilde{\mathbf{z}} = \mathbf{Q}\mathbf{\Lambda}^{-1/2}\mathbf{Q}^T \mathbf{y} = \mathbf{\Sigma}^{-1/2} \mathbf{y} = \mathbf{\Sigma}^{-1/2} (\mathbf{x} - \boldsymbol{\mu})$</p>
+					</div>
+					<div class="fragment">
+						<p>Mahalanobis distance</p>
+						<p style="color: #fa8174;">$d_m^2 = |\mathbf{z}|^2 = \mathbf{z}^T\mathbf{z} = (\mathbf{x} - \boldsymbol{\mu})^T\mathbf{\Sigma}^{-1} (\mathbf{x} - \boldsymbol{\mu})$</p>
+					</div>
 				</section>
 				<section>
 					<img src="content/bayes/mahalanobis_distance_dist.svg" alt="uvg"
@@ -309,6 +325,22 @@
 					</ul>
 				</section>
 				<section>
+					<pre class="text">
+						<code data-line-numbers="1-7|8-9|10|11">ens = exp.create_ensemble(
+    name=f"int_{time_idx}_trial_{'_'.join(keys_str)}",
+    params=params,
+    perm_strategy="step",
+    run_settings=rs,
+    batch_settings=bs
+)
+base_case_path = config["simulation"]["base_case"]
+ens.attach_generator_files(to_configure=base_case_path)
+exp.generate(ens, overwrite=True, tag="!")
+exp.start(ens, block=True, summary=True)
+						</code>
+					</pre>
+				</section>
+				<section>
 					<p>search space definition in <span style="color: var(--C3);">config.yaml</span></p>
 					<pre class="text">
 						<code data-line-numbers="1-7|8-12">smoother:
@@ -338,21 +370,7 @@ nFinestSweeps:
 			</section>
 
 			<section>
-				<section>
-					<h3>example 2:</h3>
-					<h3 style="color: var(--C0);">optimal heat exchanger design</h3>
-					<small>
-						<p>joint work with:</p>
-					<ul>
-						<li>...</li>
-						<li>Andre Weiner (TU Dresden)</li>
-						<li>M. Elwardi Fadeli (TU Darmstadt)</li>
-						<li>Alessandro Rigazzi (HPE)</li>
-						<li>Andrew Shao (HPE)</li>
-					</ul>
-					<p>code: <a href="https://github.com/OFDataCommittee/openfoam-smartsim">github.com/OFDataCommittee/openfoam-smartsim</a></p>
-				</small>
-				</section>
+				<h3 style="color: var(--C0);">$\rightarrow$ example 2</h3>
 			</section>
 
 
