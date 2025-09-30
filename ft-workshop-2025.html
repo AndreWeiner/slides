@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+
+	<title>Data-driven modeling, optimization, and control in CFD</title>
+
+	<meta name="description" content="ft-workshop-2025">
+	<meta name="author" content="Andre Weiner">
+
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<link rel="stylesheet" href="dist/reset.css">
+	<link rel="stylesheet" href="dist/reveal.css">
+	<link rel="stylesheet" href="dist/theme/black.css" id="theme">
+
+	<!-- Theme used for syntax highlighting of code -->
+	<link rel="stylesheet" href="plugin/highlight/monokai.css">
+
+<body>
+
+	<div class="reveal">
+		<div class="slides">
+			<!-- title slide -->
+			<section>
+				<div style="margin-top: 3em;">
+					<h3 style="color: var(--C3);">FlowTorch updates - 2025</h3>
+				</div>
+				<p>
+						Andre Weiner, Janis Geise, 
+						<a href="https://tu-dresden.de/ing/maschinenwesen/ism/psm/die-professur">Chair of Fluid
+							Mechanics</a>
+				</p>
+				<div class="r-hstack">
+					<img src="content/logos/TUD_white.png", style="width: 50%;">
+				</div>
+			</section>
+
+			<!-- outline -->
+			<section>
+				<section>
+					<table style="border-collapse: collapse; border: none;">
+						<tr>
+							<td style="text-align: center; vertical-align: middle; border: none;">
+								<span style="color: var(--C0); font-size: 2em;">01</span>
+							</td>
+							<td style="text-align: left; vertical-align: middle; border: none;">
+								<span>partitioned SVD</span>
+								<span style="font-size: 0.5em; display: block;">
+									dealing with large data
+								</span>
+							</td>
+						</tr>
+						<tr>
+							<td style="text-align: center; vertical-align: middle; border: none;">
+								<span style="color: var(--C0); font-size: 2em;">02</span>
+							</td>
+							<td style="text-align: left; vertical-align: middle; border: none;">
+								<span>discreate Fourier transform (DFT)</span>
+								<span style="font-size: 0.5em; display: block;">
+									and related methods
+								</span>
+							</td>
+						</tr>
+					</table>
+				</section>
+			</section>
+
+
+			<section>
+				<section>
+					<h3 style="color: var(--C0);">partitioned SVD</h3>
+					<p>dealing with very large data</p>
+				</section>
+				<section>
+					<p>motivation</p>
+					<ul>
+						<li>re-use non-MPI SVD</li>
+						<li>flexible resource usage</li>
+						<li>reduce memory constrains</li>
+						<li>use commodity hardware</li>
+					</ul>
+				</section>
+				<section>
+					<p>snapshot data and SVD</p>
+					<p>
+						$$
+							\mathbf{X} = \left[\mathbf{x}_1, \mathbf{x}_2,\ldots , \mathbf{x}_N\right]
+						$$
+					</p>
+					<p>
+						$$
+							\mathbf{X} = \mathbf{U\Sigma V}^T
+						$$
+					</p>
+				</section>
+				<section>
+					<p>paritioning in space into $S$ paritions</p>
+					<p>
+						$$
+							\mathbf{X} = \left[ \mathbf{X}_1, \mathbf{X}_2, \ldots, \mathbf{X}_S  \right]^T
+						$$
+					</p>
+					<div class="fragment">
+					<p>(sequential) partitionwise SVD</p>
+					<p>
+						$$
+							\mathbf{X}_i = \mathbf{U}_i\mathbf{\Sigma}_i\mathbf{V}^T_i,\quad i \in \left\{ j\in \mathbb{Z} | 1 \leq j \leq S \right\}
+						$$
+					</p>
+					</div>
+				</section>
+				<section>
+					<p>rearrangement in block matrices</p>
+					<p>
+						$$
+						\mathbf{X} = \left[ \mathbf{U}_1\mathbf{\Sigma}_1\mathbf{V}^T_1, \mathbf{U}_2\mathbf{\Sigma}_2\mathbf{V}^T_2, \ldots, \mathbf{U}_S\mathbf{\Sigma}_S\mathbf{V}^T_S  \right]^T
+						$$
+					</p>
+					<p>
+						$$
+						\mathbf{X} = \mathrm{diag}(\left[ \mathbf{U}_1, \mathbf{U}_2, \ldots, \mathbf{U}_S \right]) \mathbf{Y}
+						$$
+					</p>
+					<p>
+						$$
+						\mathbf{Y} = \left[ \mathbf{\Sigma}_1\mathbf{V}^T_1, \mathbf{\Sigma}_2\mathbf{V}^T_2, \ldots, \mathbf{\Sigma}_S\mathbf{V}^T_S  \right]^T
+						$$
+					</p>
+
+				</section>
+				<section>
+					<p>
+						another small SVD
+						$$
+							\mathbf{Y}=\mathbf{U}_y\mathbf{\Sigma}_y\mathbf{V}^T_y
+						$$
+					</p>
+					<p class="fragment">
+						compare
+						$$
+							\mathbf{X} = \mathbf{U\Sigma V}^T
+						$$
+						$$
+							\mathbf{X} = \mathrm{diag}(\left[ \mathbf{U}_1, \mathbf{U}_2, \ldots, \mathbf{U}_S \right]) \mathbf{U}_y\mathbf{\Sigma}_y\mathbf{V}^T_y
+						$$
+					</p>
+				</section>
+				<section>
+					<p>comparison requires</p>
+					<p>
+						$$
+						\mathbf{U} = \left[\mathbf{U}_1 \mathbf{U}_{y1}, \mathbf{U}_2 \mathbf{U}_{y2}, \ldots, \mathbf{U}_N \mathbf{U}_{yN}\right]^T
+						$$
+						$$
+							\mathbf{\Sigma} = \mathbf{\Sigma}_y
+						$$
+						$$
+							\mathbf{V} = \mathbf{V}_y
+						$$
+					</p>
+					<p>sequential evaluation of $\mathbf{U}_i \mathbf{U}_{yi}$</p>
+				</section>
+			</section>
+
+			<section>
+				<section>
+					<h3 style="color: var(--C0);">discreate Fourier transform (DFT)</h3>
+					<p>and related methods</p>
+				</section>
+				<section>
+					<p>DFT of a discretely sampled signal of length $N$</p>
+					<p>
+						\[
+							\phi_k = \frac{1}{\sqrt{N}} \sum_{n=0}^{N-1} x_n \, e^{-i 2\pi \frac{k n}{N}},
+							\
+							\quad k = 0, 1, \dots, N-1
+						\]
+					</p>
+				</section>
+				<section>
+					<p>
+						\[
+							\mathbf{\Psi}_\mathrm{DFT}
+							= \frac{1}{\sqrt{N}}
+							\begin{bmatrix}
+							1 & 1 & 1 & \cdots & 1 \\
+							1 & \omega_N & \omega_N^{2} & \cdots & \omega_N^{N-1} \\
+							1 & \omega_N^{2} & \omega_N^{4} & \cdots & \omega_N^{2(N-1)} \\
+							\vdots & \vdots & \vdots & \ddots & \vdots \\
+							1 & \omega_N^{N-1} & \omega_N^{2(N-1)} & \cdots & \omega_N^{(N-1)^2}
+							\end{bmatrix}
+						\]
+					</p>
+					<p> with $ \omega_N = e^{-\,i\,2\pi / N} $
+					</p>
+				</section>
+				<section>
+					<p>projection of data matrix onto $\mathbf{\Psi}_\mathrm{DFT}$</p>
+					<p>
+						\[
+							\hat{\mathbf{\Phi}} = \mathbf{X} \mathbf{\Psi}_\mathrm{DFT}
+						\]
+					</p>
+					<div class="fragment">
+					<p>
+						normalization to unit length
+					</p>
+					<p>
+						\[
+						\mathbf{\phi}_i = \hat{\mathbf{\phi}}_i / |\hat{\mathbf{\phi}}_i|,\quad b_i = |\hat{\mathbf{\phi}}_i|
+						\]
+					</p>
+					</div>
+					<div class="fragment">
+					<p>
+						final modal representation
+					</p>
+					<p>
+						\[
+							\mathbf{X} = \mathbf{\Phi} \mathbf{D}_\mathbf{b} \mathbf{\Psi}_\mathrm{DFT},\ \mathbf{D}_\mathbf{b} = \mathrm{diag}(\mathbf{b})
+						\]
+					</p>
+					</div>
+				</section>
+				<section>
+					<p>computational trick (economy SVD)</p>
+					<p>
+						\[
+							\mathbf{X} = \mathbf{U\Sigma V}^T, \quad \tilde{\mathbf{X}} = \mathbf{U}^T \mathbf{X} = \mathbf{\Sigma V}^T
+						\]
+					</p>
+					<div class="fragment">
+					<p>DFT of $\tilde{\mathbf{X}}$</p>
+					<p>
+						\[
+							\tilde{\mathbf{X}} = \tilde{\mathbf{\Phi}} \tilde{\mathbf{D}}_\mathbf{b} \mathbf{\Psi}_\mathrm{DFT}
+						\]
+					</p>
+					</div>
+					<div class="fragment">
+					<p>projection onto $\mathbf{U}$</p>
+					<p>
+						\[
+							\mathbf{X} = \mathbf{U}\tilde{\mathbf{X}} = \mathbf{U} \tilde{\mathbf{\Phi}} \tilde{\mathbf{D}}_\mathbf{b} \mathbf{\Psi}_\mathrm{DFT}
+						\]
+					</p>
+					</div>
+				</section>
+				<section>
+					<p>comparison with direct DFT</p>
+					<p>
+						\[
+							\mathbf{X} = \mathbf{U} \tilde{\mathbf{\Phi}} \tilde{\mathbf{D}}_\mathbf{b} \mathbf{\Psi}_\mathrm{DFT}
+						\]
+						\[
+							\mathbf{X} = \mathbf{\Phi} \mathbf{D}_\mathbf{b} \mathbf{\Psi}_\mathrm{DFT}
+						\]
+					</p>
+					<p class="fragment">note that $|\mathbf{U}\tilde{\mathbf{\phi}}_i| = |\tilde{\mathbf{\phi}}_i| = 1$</p>
+					<p class="fragment">
+						\[
+							\rightarrow \tilde{\mathbf{D}}_\mathbf{b} = \mathbf{D}_\mathbf{b},\ \mathbf{\Phi} = \mathbf{U} \tilde{\mathbf{\Phi}}
+						\]
+					</p>
+				</section>
+				<section>
+					<p>some properties</p>
+					<ul>
+						<li>rank truncation possible (noise reduction)</li>
+						<li>only one hyperparameter ($r$)</li>
+						<li>DFT of $r$ instead of $M$ observables</li>
+						<li>individual mode reconstruction</li>
+						<li>applicable to Welch or SPOD</li>
+					</ul>
+					<p class="fragment"> $\rightarrow$ go to notebooks</p>
+				</section>
+			</section>
+
+			<!-- end -->
+			<section>
+				<h1>THE END</h1>
+				<h3>Thank you for you attention!</h3>
+				<div>
+					<a href="mailto:andre.weiner@tu-dresden.de">andre.weiner@tu-dresden.de</a><br>
+					<a href="https://github.com/AndreWeiner">github.com/AndreWeiner</a>
+				</div>
+			</section>
+		</div>
+	</div>
+
+	<script src="dist/reveal.js"></script>
+	<script src="plugin/zoom/zoom.js"></script>
+	<script src="plugin/notes/notes.js"></script>
+	<script src="plugin/search/search.js"></script>
+	<script src="plugin/markdown/markdown.js"></script>
+	<script src="plugin/highlight/highlight.js"></script>
+	<script src="plugin/math/math.js"></script>
+
+	<script>
+
+		Reveal.initialize({
+			controls: true,
+			progress: true,
+			slideNumber: "c",
+			center: true,
+			hash: true,
+			katex: {
+    			local: 'libs/katex',
+  			},
+			plugins: [RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight, RevealMath.KaTeX]
+		});
+
+	</script>
+
+</body>
+
+</html>
