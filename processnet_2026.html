@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+
+	<title>Machine Learning in Fluid Dynamics - an overview</title>
+
+	<meta name="description" content="ml-fluid-2026">
+	<meta name="author" content="Andre Weiner">
+
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<link rel="stylesheet" href="dist/reset.css">
+	<link rel="stylesheet" href="dist/reveal.css">
+	<link rel="stylesheet" href="dist/theme/black.css" id="theme">
+
+	<!-- Theme used for syntax highlighting of code -->
+	<link rel="stylesheet" href="plugin/highlight/monokai.css">
+
+<body>
+
+	<div class="reveal">
+		<div class="slides">
+			<!-- title slide -->
+			<section>
+				<div style="margin-top: 3em;">
+					<h3 style="color: var(--C3);">Machine Learning in Fluid Dynamics<br>- an overview -</h3>
+				</div>
+				<p>
+						Andre Weiner,
+						<a href="https://tu-dresden.de/ing/maschinenwesen/ism/psm/die-professur">Chair of Fluid
+							Mechanics</a>
+				</p>
+				<div class="r-hstack">
+					<img src="content/logos/TUD_white.png", style="width: 50%;">
+				</div>
+			</section>
+
+			<!-- outline -->
+			<section>
+				<section>
+					<table style="border-collapse: collapse; border: none;">
+						<tr>
+							<td style="text-align: center; vertical-align: middle; border: none;">
+								<span style="color: var(--C0); font-size: 2em;">01</span>
+							</td>
+							<td style="text-align: left; vertical-align: middle; border: none;">
+								<span>machine learning tasks</span>
+								<span style="font-size: 0.5em; display: block;">
+									regression, classification, clustering, ...
+								</span>
+							</td>
+						</tr>
+						<tr>
+							<td style="text-align: center; vertical-align: middle; border: none;">
+								<span style="color: var(--C0); font-size: 2em;">02</span>
+							</td>
+							<td style="text-align: left; vertical-align: middle; border: none;">
+								<span>optimizing settings</span>
+								<span style="font-size: 0.5em; display: block;">
+									with Bayesian optimization
+								</span>
+							</td>
+						</tr>
+						<tr>
+							<td style="text-align: center; vertical-align: middle; border: none;">
+								<span style="color: var(--C0); font-size: 2em;">03</span>
+							</td>
+							<td style="text-align: left; vertical-align: middle; border: none;">
+								<span>understanding turbulent flows</span>
+								<span style="font-size: 0.5em; display: block;">
+									with modal decomposition
+								</span>
+							</td>
+						</tr>
+						<tr>
+							<td style="text-align: center; vertical-align: middle; border: none;">
+								<span style="color: var(--C0); font-size: 2em;">04</span>
+							</td>
+							<td style="text-align: left; vertical-align: middle; border: none;">
+								<span>closed-loop flow control</span>
+								<span style="font-size: 0.5em; display: block;">
+									with model-based deep reinforcement learning
+								</span>
+							</td>
+						</tr>
+					</table>
+				</section>
+			</section>
+			<section>
+				<section>
+					<h3 style="color: var(--C0);">machine learning tasks</h3>
+					<p>regression, classification, clustering, ...</p>
+				</section>
+				<section>
+					<blockquote style="width: 100%; font-size: larger; border-radius: 1em; padding: 0.5em; background: rgb(from var(--C2) r g b / 0.1);">think in terms of <span style="color: var(--C3);">machine learning tasks</span><br>(regression, classification, ...)<br>rather than <span style="color: var(--C3);">specific algorithms</span><br>(neural networks, Gaussian processes, ...)</blockquote>
+				</section>
+				<section>
+					<p><span style="color: var(--C3);">regression:</span> matching inputs and continuous outputs</p>
+					<div class="r-stack">
+						<img class="fragment fade-out" data-fragment-index="0" src="content/general/linear_regression_raw.svg" style="width: 50%;">
+						<img class="fragment" data-fragment-index="0" src="content/general/linear_regression.svg" style="width: 50%;">
+					</div>
+				</section>
+				<section>
+					<p><span style="color: var(--C3);">classification:</span> matching inputs and discrete outputs</p>
+					<div class="r-stack">
+						<img class="fragment fade-out" data-fragment-index="0" src="content/general/linear_classification_raw.svg" style="width: 50%;">
+						<img class="fragment" data-fragment-index="0" src="content/general/linear_classification.svg" style="width: 50%;">
+					</div>
+				</section>
+				<section>
+					<p><span style="color: var(--C3);">dim. reduction:</span> finding low-dim. representations</p>
+					<div class="r-stack">
+						<img class="fragment fade-out" data-fragment-index="0" src="content/general/pca_raw.svg" style="width: 50%;">
+						<img class="fragment" data-fragment-index="0" src="content/general/pca.svg" style="width: 50%;">
+					</div>
+				</section>
+				<section>
+					<p><span style="color: var(--C3);">clustering:</span> grouping similar data points</p>
+					<div class="r-stack">
+						<img class="fragment fade-out" data-fragment-index="0" src="content/general/clustering_raw.svg" style="width: 50%;">
+						<img class="fragment" data-fragment-index="0" src="content/general/clustering.svg" style="width: 50%;">
+					</div>
+				</section>
+				<section>
+					<p><span style="color: var(--C3);">reinforcement learning:</span> sequential decision making (control) under uncertainty</p>
+					<div class="r-stack">
+						<img class="fragment" src="content/general/reinforcement-0.svg" style="width: 100%;">
+						<img class="fragment" src="content/general/reinforcement-1.svg" style="width: 100%;">
+						<img class="fragment" src="content/general/reinforcement-2.svg" style="width: 100%;">
+						<img class="fragment" src="content/general/reinforcement-3.svg" style="width: 100%;">
+						<img class="fragment" src="content/general/reinforcement-4.svg" style="width: 100%;">
+					</div>
+				</section>
+				<section>
+					<blockquote style="width: 100%; font-size: larger; border-radius: 1em; padding: 0.5em; background: rgb(from var(--C2) r g b / 0.1);">
+						machine learning algorithms are essential to solve these tasks in <span style="color: var(--C3);">higher dimensions</span>
+					</blockquote>
+				</section>
+				<section>
+					<blockquote style="width: 100%; font-size: larger; border-radius: 1em; padding: 0.5em; background: rgb(from var(--C2) r g b / 0.1);">
+						many problems need to be broken up into <span style="color: var(--C3);">multiple tasks</span>
+					</blockquote>
+				</section>
+				<section>
+					<p>reduced-order modeling</p>
+					<ol>
+						<li class="fragment">
+							<span style="color: var(--C3);">dimensionality reduction</span><br>
+							maps high- to low-dim. inputs/outputs
+						</li>
+						<li class="fragment">
+							<span style="color: var(--C3);">regression or classification</span><br>
+							low-dimensional input-output mappings
+						</li>
+						<li class="fragment">
+							<span style="color: var(--C3);">back-projection (optional)</span><br>
+							inverts step 1. for new predictions
+						</li>
+					</ol>
+				</section>
+				<section>
+					<p>outlier detection (extreme events)</p>
+					<ol>
+						<li class="fragment" data-fragment-index="1">
+							<span style="color: var(--C3);">dimensionality reduction</span><br>
+							maps high- to low-dim. representations
+						</li>
+						<li class="fragment" data-fragment-index="0">
+							<span style="color: var(--C3);">clustering or classification</span><br>
+							low similarity or class probabilities
+						</li>
+					</ol>
+				</section>
+				<section>
+					<blockquote style="width: 100%; font-size: larger; border-radius: 1em; padding: 0.5em; background: rgb(from var(--C2) r g b / 0.1);">
+						formulating <span style="color: var(--C3);">sensible tasks</span> requires<br> <span style="color: var(--C3);">domain knowledge</span>
+					</blockquote>
+				</section>
+			</section>
+
+			<section>
+				<section>
+					<h3 style="color: var(--C0);">optimizing settings</h3>
+					<p>with Bayesian optimization</p>
+					<small>
+						<p>joint work with</p>
+					<ul>
+						<li>Janis Geise (TU Dresden)</li>
+						<li>Tomislav Marić (TU Darmstadt)</li>
+						<li>M. Elwardi Fadeli (TU Darmstadt)</li>
+						<li>Alessandro Rigazzi (HPE)</li>
+						<li>Andrew Shao (HPE)</li>
+					</ul>
+				</small>
+				</section>
+				<section>
+					<img src="content/bayes/naca_cl_cd_alpha.svg", style="width: 100%;">
+				</section>
+				<section>
+					<div class="r-hstack" style="gap: 1em;">
+						<img src="content/bayes/bo_step_1.svg", style="width: 25%;">
+						<img src="content/bayes/bo_step_2.svg", style="width: 25%;", class="fragment">
+						<img src="content/bayes/bo_step_3.svg", style="width: 25%;", class="fragment">
+					</div>
+					<div class="r-hstack" style="gap: 1em;">
+						<img src="content/bayes/bo_step_4.svg", style="width: 25%;", class="fragment">
+						<img src="content/bayes/bo_step_5.svg", style="width: 25%;", class="fragment">
+						<img src="content/bayes/bo_step_6.svg", style="width: 25%;", class="fragment">
+					</div>
+				</section>
+				<section>
+					<p><span style="color: var(--C0);">GAMG</span> - generalized geometric algebraic multigrid</p>
+					<div class="fragment">
+						<p>excellent introduction by <a href="https://www.youtube.com/@fluidmechanics101">Fluid Mechanics 101</a></p>
+						<ul>
+							<li><a href="https://www.youtube.com/watch?v=4UoJpazu_fU">smoothing, aliasing, correction equation</a></li>
+							<li><a href="https://www.youtube.com/watch?v=P5zKHmj4iHY">restriction and prolongation</a></li>
+						</ul>
+					</div>
+				</section>
+				<section>
+					<p>full GAMG entry in <span style="color: var(--C3);">fvSolution</span></p>
+					<pre class="text">
+						<code data-line-numbers="4|10|13|16">p
+{
+	solver                    GAMG;
+	smoother                  DICGaussSeidel;
+	tolerance                 1e-06;
+	relTol                    0.01;
+	cacheAgglomeration        yes;
+	nCellsInCoarsestLevel     10;
+	processorAgglomerator     none;
+	nPreSweeps                0;
+	preSweepsLevelMultiplier  1;
+	maxPreSweeps              10;
+	nPostSweeps               2;
+	postSweepsLevelMultiplier 1;
+	maxPostSweeps             10;
+	nFinestSweeps             2;
+	interpolateCorrection     no;
+	scaleCorrection           yes;
+	directSolveCoarsest       no;
+	coarsestLevelCorr
+	{
+		solver          PCG;
+		preconditioner  DIC;
+		tolerance       1e-06;
+		relTol          0.01;
+	}
+}
+						</code>
+					</pre>
+				</section>
+				<section>
+					<p>optimal settings depend on</p>
+					<div class="r-hstack">
+						<ul class="fragment" style="width: 40%;">
+							<li>coefficient matrix
+								<ul>
+									<li>flow physics</li>
+									<li>discretization</li>
+								</ul>
+							</li>
+						</ul>
+						<ul class="fragment" style="width: 40%;">
+							<li>parallelization</li>
+							<li>hardware</li>
+							<li>...</li>
+						</ul>
+					</div>
+					<p class="fragment" style="color: var(--C3);">$\rightarrow$ high-dim. search space with uncertainty</p>
+				</section>
+				<section>
+					<img src="content/bayes/execution_time_dt_opt.svg" width="100%">
+					<p><span style="color: var(--C3);">~15% runtime reduction</span></p>
+				</section>
+				<section>
+					<p>references & examples (GitHub)</p>
+					<ul>
+						<li><a href="https://github.com/JanisGeise/BayesOpt_solverSettings">tuning GAMG solver settings</a></li>
+						<li><a href="https://github.com/OFDataCommittee/openfoam-smartsim">tuning turbulence model parameters</a></li>
+					</ul>
+				</section>
+			</section>
+
+			<section>
+				<section>
+					<h3 style="color: var(--C0);">understanding turbulent flows</h3>
+					<p>with modal decomposition</p>
+					<small>
+						<p>joint work with</p>
+						<ul>
+							<li>Janis Geise (TU Dresden)</li>
+							<li>Sebastian Spinner (DLR)</li>
+							<li>Richard Semaan (f. TU Braunschweig)</li>
+						</ul>
+					</small>
+				</section>
+				<section>
+					<video autoplay controls loop width="100%">
+						<source src="content/dmd/cylinder2D/umag_web.mp4">
+					</video>
+					<p>flow past a cylinder: $|\mathbf{u}|$ at $Re=dU_\mathrm{in}/\nu=100$</p>
+				</section>
+				<section>
+					<p>data $=$ <span style="color: var(--C4);">spatial</span> <span style="color: var(--C3);">patterns</span> $\times$ <span style="color: var(--C0);">temporal patterns</span> </p>
+					<img class="fragment" src="content/dmd/cylinder2D/cylinder_2D_svd.png" width="70%">
+				</section>
+				<section>
+					<video autoplay controls loop width="100%">
+						<source src="content/dmd/cylinder3D/umag_web.mp4">
+					</video>
+					<p>$|\mathbf{u}|$ at $Re=dU_\mathrm{in}/\nu=3700$; DNS setup based on<br> <a href="http://dx.doi.org/10.1063/1.4818641">O. Lehmkuhl et al. (2013)</a> </p>
+				</section>
+				<section>
+					<img src="content/dmd/cylinder3D/force_coeffs_welch_4seg.svg", width="100%">
+					<p>PSD of force coefficients (p-Welch, 4 segments)<br> $St=fT_\mathrm{conv}$ and $T_\mathrm{conv}=d/U_\mathrm{in}$</p>
+				</section>
+				<section>
+					<img src="content/spod/spod_cylinder3d_spectrum.png", width="100%">
+					<p>adaptive sin-taper spectral POD
+						<br>
+						refer to <a href="https://doi.org/10.1007/s00162-024-00695-0"> B. C. Y. Yeung, O. T. Schmidt (2024)</a>
+					</p>
+				</section>
+				<section>
+					<video autoplay controls loop width="100%">
+						<source src="content/spod/cylinder_3d_vs_mode_web.mp4">
+					</video>
+					<p>vortex shedding mode<br>$St\approx 0.22$, streamwise component</p>
+				</section>
+				<section>
+					<video autoplay controls loop width="80%" style="border-radius: 1em;">
+						<source src="content/spod/xrf1_spod_mode_example.mp4">
+					</video>
+					<p>Airbus XRF-1 shock buffet mode ($Re_\infty = 3.3\times 10^6$, $Ma_\infty =0.84$, $\alpha=-4^\circ$); DDES by S. Spinner (DLR)</p>
+				</section>
+				<section>
+					<p>references & examples</p>
+					<ul>
+						<li><a href="https://github.com/AndreWeiner/flowtorch">flowTorch (flow analysis)</a></li>
+						<li><a href="https://github.com/JanisGeise/sparseSpatialSampling">sparse spatial sampling (visualization)</a></li>
+						<li><a href="https://arxiv.org/abs/2602.16443">Airbus XRF-1 modal analysis</a></li>
+					</ul>
+					<img src="content/logos/for2895_logo.png", width="50%">
+				</section>
+			</section>
+
+			<section>
+				<section>
+					<h3 style="color: var(--C0);">closed-loop flow control</h3>
+					<p>with model-based deep reinforcement learning</p>
+					<small>
+						<p>joint work with Janis Geise (TU Dresden)</p>
+					</small>
+				</section>
+				<section>
+					<img src="content/drl/cylinder2D/domain_cylinder.svg" width="100%">
+					<p>closed-loop control benchmark, $Re=100$</p>
+				</section>
+				<section>
+					<p>instantaneous reward $R_n$</p>
+					<p>
+						$$
+						  R_n = 3 - (c_{x,n} - 0.1 |c_{y_n}|)
+						$$
+					</p>
+					<p>$c_{i, n}$ - force coefficients at step $n$</p>
+				</section>
+				<section>
+					<video controls loop width="100%" style="border-radius: 25px;">
+						<source src="content/drl/cylinder2D/cylinder_MF_20fps_short.mp4">
+					</video>
+					<p>evaluation of optimal policy (control law)</p>
+				</section>
+				<section>
+					<video controls loop width="100%" style="border-radius: 25px;">
+						<source src="content/drl/pinball/pinball_MF_15fps_backward_long_web.mp4">
+					</video>
+					<p>evaluation of optimal policy (control law)</p>
+				</section>
+				<section>
+					<img src="content/drl/pinball/pinball_cx_new.png" width="100%">
+					<p>drag reduction by approx. $25\%$</p>
+				</section>
+				<section>
+					<p>references</p>
+					<ul>
+						<li><a href="https://link.springer.com/article/10.1007/s11012-024-01808-z">A. Weiner, J. Geise (2024)</a></li>
+						<li><a href="https://github.com/JanisGeise/MB_DRL_for_accelerated_learning_from_CFD">source code (GitHub)</a></li>
+					</ul>
+				</section>
+			</section>
+
+			<!-- end -->
+			<section>
+				<h1>THE END</h1>
+				<h3>Thank you for you attention!</h3>
+				<div>
+					<a href="mailto:andre.weiner@tu-dresden.de">andre.weiner@tu-dresden.de</a><br>
+					<a href="https://github.com/AndreWeiner">github.com/AndreWeiner</a>
+				</div>
+			</section>
+		</div>
+	</div>
+
+	<script src="dist/reveal.js"></script>
+	<script src="plugin/zoom/zoom.js"></script>
+	<script src="plugin/notes/notes.js"></script>
+	<script src="plugin/search/search.js"></script>
+	<script src="plugin/markdown/markdown.js"></script>
+	<script src="plugin/highlight/highlight.js"></script>
+	<script src="plugin/math/math.js"></script>
+
+	<script>
+
+		Reveal.initialize({
+			controls: true,
+			progress: true,
+			slideNumber: "c",
+			center: true,
+			hash: true,
+			katex: {
+    			local: 'libs/katex',
+  			},
+			plugins: [RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight, RevealMath.KaTeX]
+		});
+
+	</script>
+
+</body>
+
+</html>
